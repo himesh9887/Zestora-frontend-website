@@ -1,61 +1,76 @@
-import { createContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useState } from 'react';
+import { STORAGE_KEYS } from '../utils/constants';
 
 export const AuthContext = createContext();
 
+const defaultAddresses = [
+  {
+    id: 1,
+    label: 'Work',
+    line1: 'Tips G, Madhuban Bank Colony',
+    city: 'Alwar',
+    pincode: '301001',
+  },
+];
+
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const savedToken = localStorage.getItem(STORAGE_KEYS.token);
+  const savedUser = localStorage.getItem(STORAGE_KEYS.user);
 
-  useEffect(() => {
-    const token = localStorage.getItem('zestora_token');
-    const userData = localStorage.getItem('zestora_user');
-    
-    if (token && userData) {
-      setUser(JSON.parse(userData));
-      setIsAuthenticated(true);
+  const [user, setUser] = useState(() => {
+    if (!savedUser) return null;
+    try {
+      const parsed = JSON.parse(savedUser);
+      return { ...parsed, addresses: parsed.addresses?.length ? parsed.addresses : defaultAddresses };
+    } catch {
+      return null;
     }
-    setLoading(false);
-  }, []);
+  });
 
-  const login = useCallback((userData, token) => {
-    localStorage.setItem('zestora_token', token);
-    localStorage.setItem('zestora_user', JSON.stringify(userData));
-    setUser(userData);
+  const [isAuthenticated, setIsAuthenticated] = useState(Boolean(savedToken && savedUser));
+  const [loading] = useState(false);
+
+  const persistUser = (nextUser) => {
+    localStorage.setItem(STORAGE_KEYS.user, JSON.stringify(nextUser));
+    setUser(nextUser);
+  };
+
+  const login = (userData, token) => {
+    const normalizedUser = {
+      ...userData,
+      addresses: userData.addresses?.length ? userData.addresses : defaultAddresses,
+    };
+    localStorage.setItem(STORAGE_KEYS.token, token);
+    persistUser(normalizedUser);
     setIsAuthenticated(true);
-  }, []);
+  };
 
-  const register = useCallback((userData, token) => {
-    localStorage.setItem('zestora_token', token);
-    localStorage.setItem('zestora_user', JSON.stringify(userData));
-    setUser(userData);
+  const register = (userData, token) => {
+    const normalizedUser = {
+      ...userData,
+      addresses: defaultAddresses,
+    };
+    localStorage.setItem(STORAGE_KEYS.token, token);
+    persistUser(normalizedUser);
     setIsAuthenticated(true);
-  }, []);
+  };
 
-  const logout = useCallback(() => {
-    localStorage.removeItem('zestora_token');
-    localStorage.removeItem('zestora_user');
+  const logout = () => {
+    localStorage.removeItem(STORAGE_KEYS.token);
+    localStorage.removeItem(STORAGE_KEYS.user);
+    localStorage.removeItem(STORAGE_KEYS.cart);
     setUser(null);
     setIsAuthenticated(false);
-  }, []);
+  };
 
-  const updateUser = useCallback((updatedData) => {
-    const newUserData = { ...user, ...updatedData };
-    localStorage.setItem('zestora_user', JSON.stringify(newUserData));
-    setUser(newUserData);
-  }, [user]);
+  const updateUser = (updatedData) => {
+    const nextUser = { ...user, ...updatedData };
+    persistUser(nextUser);
+  };
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      isAuthenticated, 
-      login, 
-      register, 
-      logout, 
-      updateUser,
-      loading 
-    }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, loading, login, register, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );
-};  
+};

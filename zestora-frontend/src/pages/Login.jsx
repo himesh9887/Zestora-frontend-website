@@ -84,9 +84,9 @@ const Login = () => {
             <input type="checkbox" className="rounded border-zest-muted/20 bg-zest-card" />
             Remember me
           </label>
-          <Link to="/forgot-password" className="text-zest-orange hover:underline">
+          <button type="button" className="text-zest-orange hover:underline">
             Forgot password?
-          </Link>
+          </button>
         </div>
 
         <Button 

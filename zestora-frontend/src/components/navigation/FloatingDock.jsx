@@ -8,36 +8,31 @@ const FloatingDock = () => {
   const { cartCount } = useCart();
 
   const tabs = [
-    { path: '/home', icon: FaHome, label: 'Home' },
-    { path: '/home', icon: FaSearch, label: 'Search' }, // Search modal trigger
-    { path: '/cart', icon: FaShoppingCart, label: 'Cart', badge: cartCount },
-    { path: '/orders', icon: FaListAlt, label: 'Orders' },
-    { path: '/profile', icon: FaUser, label: 'Profile' },
+    { to: '/home', icon: FaHome, label: 'Home', isActive: location.pathname === '/home' && location.hash !== '#search' },
+    { to: '/home#search', icon: FaSearch, label: 'Search', isActive: location.pathname === '/home' && location.hash === '#search' },
+    { to: '/cart', icon: FaShoppingCart, label: 'Cart', badge: cartCount, isActive: location.pathname === '/cart' },
+    { to: '/orders', icon: FaListAlt, label: 'Orders', isActive: location.pathname === '/orders' },
+    { to: '/profile', icon: FaUser, label: 'Profile', isActive: location.pathname === '/profile' },
   ];
 
   return (
     <motion.div
       initial={{ y: 100 }}
       animate={{ y: 0 }}
-      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      transition={{ type: 'spring', stiffness: 260, damping: 26 }}
       className="fixed bottom-0 left-0 right-0 z-50 md:hidden"
     >
-      <div className="mx-4 mb-4 bg-zest-card/90 backdrop-blur-xl rounded-3xl border border-zest-muted/10 shadow-2xl shadow-black/50">
+      <div className="mx-4 mb-4 bg-zest-card/90 backdrop-blur-xl rounded-3xl border border-zest-muted/10 shadow-2xl shadow-black/40">
         <div className="flex items-center justify-around py-3 px-2">
           {tabs.map((tab) => {
-            const isActive = location.pathname === tab.path;
             const Icon = tab.icon;
-            
+
             return (
-              <Link
-                key={tab.label}
-                to={tab.path}
-                className="relative flex flex-col items-center gap-1 p-2"
-              >
+              <Link key={tab.label} to={tab.to} className="relative flex flex-col items-center gap-1 p-2">
                 <motion.div
                   whileTap={{ scale: 0.9 }}
                   className={`relative p-2 rounded-xl transition-colors ${
-                    isActive ? 'bg-zest-orange text-white' : 'text-zest-muted'
+                    tab.isActive ? 'bg-zest-orange text-white' : 'text-zest-muted'
                   }`}
                 >
                   <Icon size={22} />
@@ -47,17 +42,10 @@ const FloatingDock = () => {
                     </span>
                   )}
                 </motion.div>
-                <span className={`text-xs font-medium ${
-                  isActive ? 'text-zest-orange' : 'text-zest-muted'
-                }`}>
+                <span className={`text-xs font-medium ${tab.isActive ? 'text-zest-orange' : 'text-zest-muted'}`}>
                   {tab.label}
                 </span>
-                {isActive && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute -bottom-1 w-1 h-1 bg-zest-orange rounded-full"
-                  />
-                )}
+                {tab.isActive && <motion.div layoutId="activeTab" className="absolute -bottom-1 w-1 h-1 bg-zest-orange rounded-full" />}
               </Link>
             );
           })}

@@ -1,15 +1,16 @@
 import { createContext, useState, useCallback, useEffect } from 'react';
+import { STORAGE_KEYS } from '../utils/constants';
 
 export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState(() => {
-    const saved = localStorage.getItem('zestora_cart');
+    const saved = localStorage.getItem(STORAGE_KEYS.cart);
     return saved ? JSON.parse(saved) : [];
   });
 
   useEffect(() => {
-    localStorage.setItem('zestora_cart', JSON.stringify(cartItems));
+    localStorage.setItem(STORAGE_KEYS.cart, JSON.stringify(cartItems));
   }, [cartItems]);
 
   const addToCart = useCallback((item) => {

@@ -69,7 +69,7 @@ const makeMenu = (startId, restaurantName, items) =>
     image: foodGallery[(startId + idx) % foodGallery.length],
   }));
 
-export const restaurants = [
+const rawRestaurants = [
   {
     id: 1,
     name: 'Shiva Dhaba',
@@ -481,6 +481,15 @@ export const restaurants = [
     ]),
   },
 ];
+
+const cityPool = ['Alwar', 'Jaipur', 'Delhi', 'Gurugram', 'Noida', 'Mumbai'];
+const priceRanges = ['Rs150 for one', 'Rs200 for one', 'Rs250 for one', 'Rs300 for one'];
+
+export const restaurants = rawRestaurants.map((restaurant, index) => ({
+  ...restaurant,
+  city: cityPool[index % cityPool.length],
+  priceRange: priceRanges[index % priceRanges.length],
+}));
 
 export const promoBanners = [
   {

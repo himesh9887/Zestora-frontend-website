@@ -55,7 +55,10 @@ const RestaurantCard = ({ restaurant, onClick, index = 0 }) => {
               {restaurant.deliveryFee === 0 ? 'Free Delivery' : `Rs${restaurant.deliveryFee} delivery`}
             </div>
           </div>
-          <div className="mt-2 text-zest-orange font-semibold text-sm">
+          <div className="mt-2 text-zest-muted text-sm">
+            {restaurant.priceRange}
+          </div>
+          <div className="mt-1 text-zest-orange font-semibold text-sm">
             Min order Rs{restaurant.minOrder}
           </div>
         </div>
