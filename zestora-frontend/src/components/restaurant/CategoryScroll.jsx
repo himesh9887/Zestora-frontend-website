@@ -1,44 +1,31 @@
-import { useRef } from 'react';
 import { motion } from 'framer-motion';
-import { FaPizzaSlice, FaHamburger, FaDrumstickBite, FaFish, FaLeaf, FaIceCream, FaCoffee } from 'react-icons/fa';
+import { categories as defaultCategories } from '../../data/mockData';
 
-const categories = [
-  { id: 1, name: 'Pizza', icon: FaPizzaSlice },
-  { id: 2, name: 'Burger', icon: FaHamburger },
-  { id: 3, name: 'Chicken', icon: FaDrumstickBite },
-  { id: 4, name: 'Seafood', icon: FaFish },
-  { id: 5, name: 'Vegetarian', icon: FaLeaf },
-  { id: 6, name: 'Dessert', icon: FaIceCream },
-  { id: 7, name: 'Drinks', icon: FaCoffee },
-];
-
-const CategoryScroll = ({ selected, onSelect }) => {
-  const scrollRef = useRef(null);
-
+const CategoryScroll = ({ selected, onSelect, categories = defaultCategories }) => {
   return (
     <div className="relative">
-      <div 
-        ref={scrollRef}
-        className="flex gap-4 overflow-x-auto scrollbar-hide py-2 px-1"
+      <div
+        className="flex gap-3 overflow-x-auto scrollbar-hide py-1 px-1"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         {categories.map((category) => {
-          const Icon = category.icon;
           const isSelected = selected === category.id;
-          
+
           return (
             <motion.button
               key={category.id}
               whileTap={{ scale: 0.95 }}
-              onClick={() => onSelect(isSelected ? null : category.id)}
-              className={`flex flex-col items-center gap-2 min-w-[80px] p-3 rounded-2xl transition-all ${
-                isSelected 
-                  ? 'bg-zest-orange text-white shadow-lg shadow-orange-500/30' 
-                  : 'bg-zest-card text-zest-muted hover:bg-zest-card/80'
+              onClick={() => onSelect(category.id)}
+              className={`flex flex-col items-center gap-2 min-w-[84px] p-2 rounded-2xl transition-all border ${
+                isSelected
+                  ? 'bg-zest-orange/15 border-zest-orange text-white'
+                  : 'bg-zest-card border-zest-muted/10 text-zest-muted hover:border-zest-muted/30'
               }`}
             >
-              <Icon size={24} />
-              <span className="text-xs font-medium whitespace-nowrap">{category.name}</span>
+              <div className="w-12 h-12 rounded-full overflow-hidden border border-white/10">
+                <img src={category.image} alt={category.label} className="w-full h-full object-cover" />
+              </div>
+              <span className="text-xs font-medium whitespace-nowrap">{category.label}</span>
             </motion.button>
           );
         })}

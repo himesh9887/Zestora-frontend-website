@@ -1,99 +1,44 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaMapMarkerAlt, FaSearch, FaChevronDown } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaSearch, FaChevronDown, FaSlidersH, FaBolt, FaLeaf } from 'react-icons/fa';
 import MainLayout from '../layouts/MainLayout';
 import CategoryScroll from '../components/restaurant/CategoryScroll';
 import RestaurantCard from '../components/restaurant/RestaurantCard';
-
-// Mock Data
-const restaurants = [
-  {
-    id: 1,
-    name: "Burger King",
-    cuisine: "American • Burgers • Fast Food",
-    rating: 4.5,
-    deliveryTime: 25,
-    deliveryFee: 0,
-    minOrder: 15,
-    image: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=800&auto=format&fit=crop",
-    category: 2
-  },
-  {
-    id: 2,
-    name: "Pizza Hut",
-    cuisine: "Italian • Pizza • Pasta",
-    rating: 4.3,
-    deliveryTime: 35,
-    deliveryFee: 2.99,
-    minOrder: 20,
-    image: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=800&auto=format&fit=crop",
-    category: 1
-  },
-  {
-    id: 3,
-    name: "Sushi Master",
-    cuisine: "Japanese • Sushi • Asian",
-    rating: 4.8,
-    deliveryTime: 40,
-    deliveryFee: 3.99,
-    minOrder: 25,
-    image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&auto=format&fit=crop",
-    category: 4
-  },
-  {
-    id: 4,
-    name: "Green Garden",
-    cuisine: "Healthy • Salads • Vegan",
-    rating: 4.6,
-    deliveryTime: 20,
-    deliveryFee: 1.99,
-    minOrder: 12,
-    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&auto=format&fit=crop",
-    category: 5
-  },
-  {
-    id: 5,
-    name: "Chicken Republic",
-    cuisine: "Chicken • Wings • Fast Food",
-    rating: 4.2,
-    deliveryTime: 30,
-    deliveryFee: 2.49,
-    minOrder: 18,
-    image: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=800&auto=format&fit=crop",
-    category: 3
-  },
-  {
-    id: 6,
-    name: "Ocean Basket",
-    cuisine: "Seafood • Fish • Grill",
-    rating: 4.7,
-    deliveryTime: 45,
-    deliveryFee: 4.99,
-    minOrder: 30,
-    image: "https://images.unsplash.com/photo-1534939561126-855b8675edd7?w=800&auto=format&fit=crop",
-    category: 4
-  }
-];
+import { categories, promoBanners, restaurants } from '../data/mockData';
 
 const Home = () => {
   const navigate = useNavigate();
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isFastOnly, setIsFastOnly] = useState(false);
+  const [isPureVegOnly, setIsPureVegOnly] = useState(false);
+  const [sortBy, setSortBy] = useState('relevance');
 
-  const filteredRestaurants = restaurants.filter(r => {
-    const matchesCategory = selectedCategory ? r.category === selectedCategory : true;
-    const matchesSearch = r.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                         r.cuisine.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  const activeBanner = promoBanners[0];
+
+  const filteredRestaurants = restaurants
+    .filter((restaurant) => {
+      const matchesCategory =
+        selectedCategory === 'all' ? true : restaurant.category === selectedCategory;
+      const matchesSearch =
+        restaurant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        restaurant.cuisine.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesFast = isFastOnly ? restaurant.deliveryTime <= 20 : true;
+      const matchesVeg = isPureVegOnly ? restaurant.pureVeg : true;
+      return matchesCategory && matchesSearch && matchesFast && matchesVeg;
+    })
+    .sort((a, b) => {
+      if (sortBy === 'rating') return b.rating - a.rating;
+      if (sortBy === 'delivery') return a.deliveryTime - b.deliveryTime;
+      return 0;
+    });
 
   return (
     <MainLayout>
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        {/* Location & Search */}
-        <div className="mb-8 space-y-4">
-          <motion.div 
+      <div className="max-w-7xl mx-auto px-4 py-5 md:py-6">
+        <div className="mb-5 space-y-4">
+          <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             className="flex items-center gap-2 text-zest-muted"
@@ -101,11 +46,11 @@ const Home = () => {
             <FaMapMarkerAlt className="text-zest-orange" />
             <span className="text-sm">Delivering to</span>
             <button className="flex items-center gap-1 text-white font-semibold hover:text-zest-orange transition-colors">
-              123 Main Street <FaChevronDown size={12} />
+              Work, Alwar <FaChevronDown size={12} />
             </button>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
@@ -114,31 +59,84 @@ const Home = () => {
             <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-zest-muted" />
             <input
               type="text"
-              placeholder="Search restaurants, cuisines..."
+              placeholder="Search for restaurant, dish, or cuisine"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(event) => setSearchQuery(event.target.value)}
               className="w-full bg-zest-card border border-zest-muted/20 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-zest-muted/50 focus:outline-none focus:border-zest-orange focus:ring-2 focus:ring-zest-orange/20"
             />
           </motion.div>
         </div>
 
-        {/* Categories */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="relative overflow-hidden rounded-3xl mb-6"
+        >
+          <img src={activeBanner.image} alt={activeBanner.title} className="w-full h-44 md:h-60 object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-r from-zest-dark via-zest-dark/70 to-transparent" />
+          <div className="absolute inset-0 p-5 md:p-8 flex flex-col justify-center">
+            <p className="text-zest-orange font-semibold text-sm mb-1">Gold Offer</p>
+            <h2 className="text-3xl md:text-5xl font-black text-white leading-tight">{activeBanner.title}</h2>
+            <p className="text-zest-text/85 mt-2">{activeBanner.subtitle}</p>
+          </div>
+        </motion.section>
+
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="mb-8"
+          className="mb-6"
         >
-          <h2 className="text-xl font-bold text-white mb-4">Categories</h2>
-          <CategoryScroll selected={selectedCategory} onSelect={setSelectedCategory} />
+          <h2 className="text-lg md:text-xl font-bold text-white mb-4">What's on your mind?</h2>
+          <CategoryScroll
+            selected={selectedCategory}
+            onSelect={setSelectedCategory}
+            categories={categories}
+          />
         </motion.div>
 
-        {/* Restaurants */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.25 }}
+          className="flex gap-3 overflow-x-auto pb-2 mb-6 scrollbar-hide"
+        >
+          <button
+            onClick={() => setSortBy(sortBy === 'rating' ? 'relevance' : 'rating')}
+            className={`px-4 py-2 rounded-xl border text-sm font-medium flex items-center gap-2 whitespace-nowrap ${
+              sortBy === 'rating'
+                ? 'bg-zest-orange text-white border-zest-orange'
+                : 'bg-zest-card text-zest-muted border-zest-muted/20'
+            }`}
+          >
+            <FaSlidersH /> Sort
+          </button>
+          <button
+            onClick={() => setIsFastOnly(!isFastOnly)}
+            className={`px-4 py-2 rounded-xl border text-sm font-medium flex items-center gap-2 whitespace-nowrap ${
+              isFastOnly
+                ? 'bg-zest-orange text-white border-zest-orange'
+                : 'bg-zest-card text-zest-muted border-zest-muted/20'
+            }`}
+          >
+            <FaBolt /> Near & Fast
+          </button>
+          <button
+            onClick={() => setIsPureVegOnly(!isPureVegOnly)}
+            className={`px-4 py-2 rounded-xl border text-sm font-medium flex items-center gap-2 whitespace-nowrap ${
+              isPureVegOnly
+                ? 'bg-zest-orange text-white border-zest-orange'
+                : 'bg-zest-card text-zest-muted border-zest-muted/20'
+            }`}
+          >
+            <FaLeaf /> Pure Veg
+          </button>
+        </motion.div>
+
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-white">
-              {selectedCategory ? 'Filtered Results' : 'Popular Near You'}
-            </h2>
+            <h2 className="text-xl font-bold text-white">Top restaurants to explore</h2>
             <span className="text-zest-muted text-sm">{filteredRestaurants.length} places</span>
           </div>
 
@@ -154,14 +152,20 @@ const Home = () => {
           </div>
 
           {filteredRestaurants.length === 0 && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="text-center py-12"
             >
               <p className="text-zest-muted text-lg">No restaurants found</p>
-              <button 
-                onClick={() => {setSelectedCategory(null); setSearchQuery('');}}
+              <button
+                onClick={() => {
+                  setSelectedCategory('all');
+                  setSearchQuery('');
+                  setIsFastOnly(false);
+                  setIsPureVegOnly(false);
+                  setSortBy('relevance');
+                }}
                 className="mt-4 text-zest-orange hover:underline"
               >
                 Clear filters

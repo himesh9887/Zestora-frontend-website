@@ -37,7 +37,7 @@ const MenuItem = ({ item, restaurantId }) => {
         </div>
         
         <div className="flex items-center justify-between mt-2">
-          <span className="text-zest-orange font-bold text-lg">${item.price}</span>
+          <span className="text-zest-orange font-bold text-lg">Rs{item.price}</span>
           
           {quantity === 0 ? (
             <motion.button
