@@ -1,50 +1,45 @@
-const foodImageTerms = [
-  'paneer butter masala',
-  'chole bhature',
-  'veg biryani',
-  'butter naan',
-  'masala dosa',
-  'idli sambar',
-  'dal makhani',
-  'rajma chawal',
-  'aloo paratha',
-  'pav bhaji',
-  'hakka noodles',
-  'veg manchurian',
-  'chilli paneer',
-  'spring rolls',
-  'sushi platter',
-  'ramen bowl',
-  'fried chicken',
-  'grilled chicken',
-  'chicken burger',
-  'mutton curry',
-  'fish fry',
-  'prawn curry',
-  'margherita pizza',
-  'pepperoni pizza',
-  'pasta alfredo',
-  'caesar salad',
-  'greek salad',
-  'falafel wrap',
-  'tacos',
-  'burrito bowl',
-  'ice cream sundae',
-  'chocolate cake',
-  'donuts',
-  'waffles',
-  'coffee latte',
-  'cold coffee',
-  'fresh juice',
-  'mango smoothie',
-  'mojito',
-  'fruit bowl',
+export const foodGallery = [
+  'https://images.pexels.com/photos/12737656/pexels-photo-12737656.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/9609838/pexels-photo-9609838.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/1624487/pexels-photo-1624487.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/1059943/pexels-photo-1059943.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/5560763/pexels-photo-5560763.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/8601417/pexels-photo-8601417.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/2474661/pexels-photo-2474661.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/1640774/pexels-photo-1640774.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/825661/pexels-photo-825661.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/1639562/pexels-photo-1639562.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/1583884/pexels-photo-1583884.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/2347311/pexels-photo-2347311.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/1907642/pexels-photo-1907642.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/1437267/pexels-photo-1437267.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/761854/pexels-photo-761854.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/4109234/pexels-photo-4109234.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/2338407/pexels-photo-2338407.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/3296276/pexels-photo-3296276.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/725991/pexels-photo-725991.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/2098085/pexels-photo-2098085.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/1092730/pexels-photo-1092730.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/3026808/pexels-photo-3026808.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/312418/pexels-photo-312418.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/4393021/pexels-photo-4393021.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/103566/pexels-photo-103566.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/1352245/pexels-photo-1352245.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/291528/pexels-photo-291528.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/3026803/pexels-photo-3026803.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/230325/pexels-photo-230325.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/4958792/pexels-photo-4958792.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/1055272/pexels-photo-1055272.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/3026804/pexels-photo-3026804.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/723198/pexels-photo-723198.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/699953/pexels-photo-699953.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/70497/pexels-photo-70497.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/76093/pexels-photo-76093.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'https://images.pexels.com/photos/67468/pexels-photo-67468.jpeg?auto=compress&cs=tinysrgb&w=1200',
 ];
-
-export const foodGallery = foodImageTerms.map(
-  (term, index) =>
-    `https://source.unsplash.com/900x700/?${encodeURIComponent(term)},food&sig=${index + 1}`
-);
 
 export const categories = [
   { id: 'all', label: 'All', image: foodGallery[0] },
@@ -482,13 +477,81 @@ const rawRestaurants = [
   },
 ];
 
+const extraRestaurantSeeds = [
+  { name: 'Royal Tandoor', cuisine: 'North Indian | Tandoori', category: 'north-indian', pureVeg: false, offer: 'Flat Rs100 OFF', area: 'Lajpat Nagar' },
+  { name: 'Spice Junction', cuisine: 'Indian | Curry | Combo', category: 'north-indian', pureVeg: false, offer: 'Buy 2 Get 1 Free', area: 'Nangli Circle' },
+  { name: 'Noodle Nest', cuisine: 'Chinese | Noodles | Momos', category: 'chinese', pureVeg: false, offer: '20% OFF on combos', area: 'Railway Station Road' },
+  { name: 'Burger Blast', cuisine: 'Burgers | Fries | Wraps', category: 'burger', pureVeg: false, offer: 'Free fries on Rs299', area: 'Scheme 10' },
+  { name: 'Cheese Crust', cuisine: 'Pizza | Pasta | Garlic Bread', category: 'pizza', pureVeg: false, offer: 'Second pizza at Rs99', area: 'Moti Chowk' },
+  { name: 'Veggie Delight', cuisine: 'Healthy | Salad | Bowl', category: 'drinks', pureVeg: true, offer: 'Healthy meal from Rs129', area: 'Shastri Nagar' },
+  { name: 'Desi Rasoi', cuisine: 'Pure Veg | Thali | Indian', category: 'north-indian', pureVeg: true, offer: 'Thali combo special', area: 'Old Market' },
+  { name: 'Dum Biryani Co', cuisine: 'Biryani | Mughlai | Kebabs', category: 'north-indian', pureVeg: false, offer: 'Rs125 OFF on family pack', area: 'Hasan Khan Mewati Nagar' },
+  { name: 'Momo Point', cuisine: 'Tibetan | Chinese | Fast Food', category: 'chinese', pureVeg: false, offer: 'Free dip with momos', area: 'Company Bagh' },
+  { name: 'Waffle Works', cuisine: 'Desserts | Waffles | Shakes', category: 'desserts', pureVeg: true, offer: 'Sweet combo at Rs149', area: 'Clock Tower' },
+  { name: 'Coffee Crew', cuisine: 'Cafe | Coffee | Snacks', category: 'drinks', pureVeg: true, offer: 'Buy 1 Get 1 Coffee', area: 'Kala Kuan' },
+  { name: 'Punjabi Zaika', cuisine: 'Punjabi | Kebabs | Curry', category: 'north-indian', pureVeg: false, offer: '40% OFF up to Rs120', area: 'Surya Nagar' },
+  { name: 'Street Bites', cuisine: 'Street Food | Chaat | Rolls', category: 'north-indian', pureVeg: true, offer: 'Under Rs99 specials', area: 'Nehru Garden' },
+  { name: 'Sizzler Hub', cuisine: 'Continental | Grill | Sizzler', category: 'burger', pureVeg: false, offer: 'Starter free on Rs499', area: 'Scheme 2' },
+  { name: 'Pasta Palace', cuisine: 'Italian | Pasta | Pizza', category: 'pizza', pureVeg: true, offer: 'Cheese burst deal', area: 'Kashiram Circle' },
+  { name: 'The Bowl House', cuisine: 'Healthy | Bowl | Smoothie', category: 'drinks', pureVeg: true, offer: 'Flat Rs80 OFF', area: 'Naman Hotel Road' },
+  { name: 'Tikka Town', cuisine: 'BBQ | Tikka | Rolls', category: 'north-indian', pureVeg: false, offer: 'Family pack offer', area: 'Hope Circus' },
+  { name: 'Chai & Snacks', cuisine: 'Snacks | Tea | Pakoda', category: 'north-indian', pureVeg: true, offer: 'Evening special combo', area: 'Station Area' },
+  { name: 'South Spice', cuisine: 'South Indian | Dosa | Idli', category: 'south-indian', pureVeg: true, offer: 'Breakfast combo from Rs89', area: 'Gandhi Nagar' },
+  { name: 'Wrap It Up', cuisine: 'Wraps | Roll | Fast Food', category: 'burger', pureVeg: false, offer: 'Free drink on wraps', area: 'Rajasthan Circle' },
+  { name: 'Donut Den', cuisine: 'Donuts | Dessert | Bakery', category: 'desserts', pureVeg: true, offer: '2+1 donut box', area: 'Bala Quila Road' },
+  { name: 'Kebab Kingdom', cuisine: 'Kebab | Mughlai | Curry', category: 'north-indian', pureVeg: false, offer: 'Late night special', area: 'MIA Road' },
+  { name: 'Sushi Spot', cuisine: 'Japanese | Sushi | Ramen', category: 'chinese', pureVeg: false, offer: 'Combo platter at Rs299', area: 'City Mall' },
+  { name: 'Fresh & Fit', cuisine: 'Salad | Juice | Detox', category: 'drinks', pureVeg: true, offer: 'Clean eating offer', area: 'Shopex Mall' },
+  { name: 'Thali Express', cuisine: 'North Indian | Thali | Combo', category: 'north-indian', pureVeg: true, offer: 'Thali deal from Rs119', area: 'Manu Marg' },
+  { name: 'Roll Republic', cuisine: 'Rolls | Wraps | Fast Food', category: 'burger', pureVeg: false, offer: 'Flat Rs90 OFF', area: 'Matsya Nagar' },
+  { name: 'Maharaja Meals', cuisine: 'Indian | Curry | Meals', category: 'north-indian', pureVeg: false, offer: 'Meal combo special', area: 'Budh Vihar' },
+  { name: 'Dosa Adda', cuisine: 'South Indian | Dosa | Tiffin', category: 'south-indian', pureVeg: true, offer: 'Masala dosa from Rs89', area: 'Nai Mandi' },
+  { name: 'Tandoori Treat', cuisine: 'Tandoor | Kebabs | Grill', category: 'north-indian', pureVeg: false, offer: '30% OFF on grills', area: 'Arya Nagar' },
+  { name: 'Pizza Junction', cuisine: 'Pizza | Pasta | Italian', category: 'pizza', pureVeg: false, offer: 'Cheese combo at Rs199', area: 'Kalakand Market' },
+  { name: 'Snack Station', cuisine: 'Snacks | Chaat | Tea', category: 'north-indian', pureVeg: true, offer: 'Evening snacks combo', area: 'Neemrana Road' },
+  { name: 'Mughlai Nights', cuisine: 'Mughlai | Biryani | Korma', category: 'north-indian', pureVeg: false, offer: 'Rs150 OFF on family order', area: 'Ambedkar Nagar' },
+  { name: 'Cake Studio', cuisine: 'Desserts | Cakes | Bakery', category: 'desserts', pureVeg: true, offer: 'Free pastry on Rs399', area: 'Bhagat Singh Circle' },
+];
+
+const extraRestaurants = extraRestaurantSeeds.map((seed, index) => {
+  const base = rawRestaurants[index % rawRestaurants.length];
+  const restaurantId = 11 + index;
+  const menuBaseId = 2000 + index * 10;
+
+  return {
+    ...base,
+    id: restaurantId,
+    name: seed.name,
+    cuisine: seed.cuisine,
+    category: seed.category,
+    pureVeg: seed.pureVeg,
+    offer: seed.offer,
+    rating: Number((4 + ((index * 7) % 9) / 10).toFixed(1)),
+    deliveryTime: 14 + (index % 18),
+    deliveryFee: index % 3 === 0 ? 0 : 9 + (index % 5) * 5,
+    minOrder: 99 + (index % 6) * 30,
+    distanceKm: Number((1.1 + (index % 8) * 0.6).toFixed(1)),
+    image: foodGallery[(index + 11) % foodGallery.length],
+    address: `${seed.area}, Alwar`,
+    city: 'Alwar',
+    menu: base.menu.map((item, menuIndex) => ({
+      ...item,
+      id: menuBaseId + menuIndex,
+      restaurantId,
+      restaurantName: seed.name,
+      image: foodGallery[(index * 3 + menuIndex + 5) % foodGallery.length],
+    })),
+  };
+});
+
+const allRestaurants = [...rawRestaurants, ...extraRestaurants];
 const cityPool = ['Alwar', 'Jaipur', 'Delhi', 'Gurugram', 'Noida', 'Mumbai'];
 const priceRanges = ['Rs150 for one', 'Rs200 for one', 'Rs250 for one', 'Rs300 for one'];
 
-export const restaurants = rawRestaurants.map((restaurant, index) => ({
+export const restaurants = allRestaurants.map((restaurant, index) => ({
   ...restaurant,
-  city: cityPool[index % cityPool.length],
-  priceRange: priceRanges[index % priceRanges.length],
+  city: restaurant.city || cityPool[index % cityPool.length],
+  priceRange: restaurant.priceRange || priceRanges[index % priceRanges.length],
 }));
 
 export const promoBanners = [

@@ -9,6 +9,8 @@ import { ORDER_STATUS } from '../utils/constants';
 import { formatCurrency, formatOrderDate } from '../utils/helpers';
 import { useUI } from '../hooks/useUI';
 
+const FALLBACK_FOOD_IMAGE = '/food/food-01.svg';
+
 const statusConfig = {
   [ORDER_STATUS.PREPARING]: {
     color: 'text-zest-warning',
@@ -78,6 +80,7 @@ const Orders = () => {
           {filteredOrders.map((order, index) => {
             const status = statusConfig[order.status];
             const StatusIcon = status.icon;
+            const previewItems = order.items.slice(0, 4);
 
             return (
               <motion.div
@@ -101,6 +104,24 @@ const Orders = () => {
                 <p className="text-zest-muted text-sm mb-3 line-clamp-2">
                   {order.items.map((item) => item.name).join(', ')}
                 </p>
+
+                {previewItems.length > 0 && (
+                  <div className="mb-4 grid grid-cols-4 gap-2">
+                    {previewItems.map((item, photoIndex) => (
+                      <div key={`${item.id}-${photoIndex}`} className="h-16 rounded-lg overflow-hidden bg-zest-dark">
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          onError={(event) => {
+                            event.currentTarget.onerror = null;
+                            event.currentTarget.src = FALLBACK_FOOD_IMAGE;
+                          }}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
 
                 <div className="flex justify-between items-center">
                   <span className="text-zest-muted text-sm">{formatOrderDate(order.createdAt)}</span>

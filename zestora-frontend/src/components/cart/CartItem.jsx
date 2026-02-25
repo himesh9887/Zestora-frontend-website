@@ -3,6 +3,8 @@ import { FaTrash, FaPlus, FaMinus } from 'react-icons/fa';
 import { useCart } from '../../hooks/useCart';
 import { formatCurrency } from '../../utils/helpers';
 
+const FALLBACK_FOOD_IMAGE = '/food/food-01.svg';
+
 const CartItem = ({ item }) => {
   const { updateQuantity, removeFromCart } = useCart();
 
@@ -15,7 +17,15 @@ const CartItem = ({ item }) => {
       className="bg-zest-card rounded-2xl p-4 flex gap-4 border border-zest-muted/10"
     >
       <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
-        <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+        <img
+          src={item.image}
+          alt={item.name}
+          onError={(event) => {
+            event.currentTarget.onerror = null;
+            event.currentTarget.src = FALLBACK_FOOD_IMAGE;
+          }}
+          className="w-full h-full object-cover"
+        />
       </div>
 
       <div className="flex-1 flex flex-col justify-between">

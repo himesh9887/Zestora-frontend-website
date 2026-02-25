@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
 import { categories as defaultCategories } from '../../data/mockData';
 
+const FALLBACK_FOOD_IMAGE = '/food/food-01.svg';
+
 const CategoryScroll = ({ selected, onSelect, categories = defaultCategories }) => {
   return (
     <div className="relative">
@@ -23,7 +25,15 @@ const CategoryScroll = ({ selected, onSelect, categories = defaultCategories }) 
               }`}
             >
               <div className="w-12 h-12 rounded-full overflow-hidden border border-white/10">
-                <img src={category.image} alt={category.label} className="w-full h-full object-cover" />
+                <img
+                  src={category.image}
+                  alt={category.label}
+                  onError={(event) => {
+                    event.currentTarget.onerror = null;
+                    event.currentTarget.src = FALLBACK_FOOD_IMAGE;
+                  }}
+                  className="w-full h-full object-cover"
+                />
               </div>
               <span className="text-xs font-medium whitespace-nowrap">{category.label}</span>
             </motion.button>

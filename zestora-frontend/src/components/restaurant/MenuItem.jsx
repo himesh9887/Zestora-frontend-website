@@ -3,6 +3,8 @@ import { FaPlus, FaMinus } from 'react-icons/fa';
 import { useCart } from '../../hooks/useCart';
 import { useUI } from '../../hooks/useUI';
 
+const FALLBACK_FOOD_IMAGE = '/food/food-01.svg';
+
 const MenuItem = ({ item, restaurantId }) => {
   const { cartItems, addToCart, updateQuantity } = useCart();
   const { showToast } = useUI();
@@ -24,16 +26,24 @@ const MenuItem = ({ item, restaurantId }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -2 }}
-      className="bg-zest-card rounded-2xl p-4 flex gap-4 border border-zest-muted/10"
+      className="bg-white md:bg-zest-card rounded-2xl p-4 flex gap-4 border border-slate-200 md:border-zest-muted/10"
     >
       <div className="w-24 h-24 rounded-xl overflow-hidden flex-shrink-0">
-        <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+        <img
+          src={item.image}
+          alt={item.name}
+          onError={(event) => {
+            event.currentTarget.onerror = null;
+            event.currentTarget.src = FALLBACK_FOOD_IMAGE;
+          }}
+          className="w-full h-full object-cover"
+        />
       </div>
 
       <div className="flex-1 flex flex-col justify-between">
         <div>
-          <h4 className="font-semibold text-zest-text mb-1">{item.name}</h4>
-          <p className="text-zest-muted text-sm line-clamp-2">{item.description}</p>
+          <h4 className="font-semibold text-slate-900 md:text-zest-text mb-1">{item.name}</h4>
+          <p className="text-slate-600 md:text-zest-muted text-sm line-clamp-2">{item.description}</p>
         </div>
 
         <div className="flex items-center justify-between mt-2">
@@ -43,20 +53,20 @@ const MenuItem = ({ item, restaurantId }) => {
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={handleAdd}
-              className="bg-zest-orange text-white px-3 py-2 rounded-xl hover:bg-orange-600 transition-colors"
+              className="bg-zest-orange text-white px-4 py-2 rounded-xl hover:bg-orange-600 transition-colors text-lg md:text-base"
             >
               Add
             </motion.button>
           ) : (
-            <div className="flex items-center gap-3 bg-zest-dark rounded-xl p-1">
+            <div className="flex items-center gap-3 bg-slate-100 md:bg-zest-dark rounded-xl p-1">
               <motion.button
                 whileTap={{ scale: 0.9 }}
                 onClick={() => updateQuantity(item.id, quantity - 1)}
-                className="p-2 text-zest-muted hover:text-zest-text"
+                className="p-2 text-slate-500 md:text-zest-muted hover:text-slate-900 md:hover:text-zest-text"
               >
                 <FaMinus size={14} />
               </motion.button>
-              <span className="text-zest-text font-semibold w-6 text-center">{quantity}</span>
+              <span className="text-slate-900 md:text-zest-text font-semibold w-6 text-center">{quantity}</span>
               <motion.button
                 whileTap={{ scale: 0.9 }}
                 onClick={() => updateQuantity(item.id, quantity + 1)}

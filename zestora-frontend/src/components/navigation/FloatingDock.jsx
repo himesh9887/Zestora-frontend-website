@@ -22,7 +22,7 @@ const FloatingDock = () => {
       transition={{ type: 'spring', stiffness: 260, damping: 26 }}
       className="fixed bottom-0 left-0 right-0 z-50 md:hidden"
     >
-      <div className="mx-4 mb-4 bg-zest-card/90 backdrop-blur-xl rounded-3xl border border-zest-muted/10 shadow-2xl shadow-black/40">
+      <div className="mx-4 mb-4 bg-white/95 backdrop-blur-xl rounded-3xl border border-slate-200 shadow-lg shadow-black/10">
         <div className="flex items-center justify-around py-3 px-2">
           {tabs.map((tab) => {
             const Icon = tab.icon;
@@ -32,7 +32,7 @@ const FloatingDock = () => {
                 <motion.div
                   whileTap={{ scale: 0.9 }}
                   className={`relative p-2 rounded-xl transition-colors ${
-                    tab.isActive ? 'bg-zest-orange text-white' : 'text-zest-muted'
+                    tab.isActive ? 'bg-zest-orange/15 text-zest-orange' : 'text-slate-500'
                   }`}
                 >
                   <Icon size={22} />
@@ -42,7 +42,7 @@ const FloatingDock = () => {
                     </span>
                   )}
                 </motion.div>
-                <span className={`text-xs font-medium ${tab.isActive ? 'text-zest-orange' : 'text-zest-muted'}`}>
+                <span className={`text-xs font-medium ${tab.isActive ? 'text-zest-orange' : 'text-slate-500'}`}>
                   {tab.label}
                 </span>
                 {tab.isActive && <motion.div layoutId="activeTab" className="absolute -bottom-1 w-1 h-1 bg-zest-orange rounded-full" />}
