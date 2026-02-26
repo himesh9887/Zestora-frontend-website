@@ -14,7 +14,7 @@ const CartItem = ({ item }) => {
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 20 }}
-      className="bg-zest-card rounded-2xl p-4 flex gap-4 border border-zest-muted/10"
+      className="bg-white md:bg-zest-card rounded-2xl p-4 flex gap-4 border border-slate-200 md:border-zest-muted/10"
     >
       <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
         <img
@@ -31,13 +31,13 @@ const CartItem = ({ item }) => {
       <div className="flex-1 flex flex-col justify-between">
         <div className="flex justify-between items-start">
           <div>
-            <h4 className="font-semibold text-zest-text">{item.name}</h4>
-            <p className="text-zest-muted text-xs">{item.restaurantName}</p>
+            <h4 className="font-semibold text-slate-900 md:text-zest-text">{item.name}</h4>
+            <p className="text-slate-500 md:text-zest-muted text-xs">{item.restaurantName}</p>
           </div>
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={() => removeFromCart(item.id)}
-            className="text-zest-muted hover:text-zest-danger p-1"
+            className="text-slate-500 md:text-zest-muted hover:text-zest-danger p-1"
           >
             <FaTrash size={16} />
           </motion.button>
@@ -46,15 +46,15 @@ const CartItem = ({ item }) => {
         <div className="flex items-center justify-between">
           <span className="text-zest-orange font-bold">{formatCurrency(item.price * item.quantity)}</span>
 
-          <div className="flex items-center gap-2 bg-zest-dark rounded-xl p-1">
+          <div className="flex items-center gap-2 bg-slate-100 md:bg-zest-dark rounded-xl p-1">
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={() => updateQuantity(item.id, item.quantity - 1)}
-              className="p-2 text-zest-muted hover:text-zest-text"
+              className="p-2 text-slate-500 md:text-zest-muted hover:text-slate-900 md:hover:text-zest-text"
             >
               <FaMinus size={12} />
             </motion.button>
-            <span className="text-zest-text font-semibold w-6 text-center text-sm">{item.quantity}</span>
+            <span className="text-slate-900 md:text-zest-text font-semibold w-6 text-center text-sm">{item.quantity}</span>
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={() => updateQuantity(item.id, item.quantity + 1)}

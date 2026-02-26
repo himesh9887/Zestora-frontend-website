@@ -12,6 +12,7 @@ import {
   FaBolt,
   FaTicketAlt,
   FaUserCircle,
+  FaStar,
 } from 'react-icons/fa';
 import MainLayout from '../layouts/MainLayout';
 import CategoryScroll from '../components/restaurant/CategoryScroll';
@@ -28,6 +29,7 @@ const Home = () => {
   const { city, cityOptions, selectManualCity } = useLocationState();
 
   const searchRef = useRef(null);
+  const stickySearchRef = useRef(null);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('rating');
@@ -35,6 +37,9 @@ const Home = () => {
   const [under100Only, setUnder100Only] = useState(false);
   const [isCityMenuOpen, setIsCityMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [heroSlide, setHeroSlide] = useState(0);
+  const [vegModeEnabled, setVegModeEnabled] = useState(false);
+  const [showFloatingSearch, setShowFloatingSearch] = useState(false);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -44,11 +49,44 @@ const Home = () => {
 
   useEffect(() => {
     if (location.hash === '#search') {
-      searchRef.current?.focus();
+      if (showFloatingSearch) {
+        stickySearchRef.current?.focus();
+      } else {
+        searchRef.current?.focus();
+      }
     }
-  }, [location.hash]);
+  }, [location.hash, showFloatingSearch]);
 
   const activeBanner = promoBanners[0];
+  const mobileHeroBanners = useMemo(() => promoBanners.slice(0, 4), []);
+
+  useEffect(() => {
+    if (!isMobile || mobileHeroBanners.length <= 1) return undefined;
+    const timer = setInterval(() => {
+      setHeroSlide((prev) => (prev + 1) % mobileHeroBanners.length);
+    }, 3200);
+    return () => clearInterval(timer);
+  }, [isMobile, mobileHeroBanners.length]);
+
+  useEffect(() => {
+    if (!isMobile) {
+      setShowFloatingSearch(false);
+      return undefined;
+    }
+
+    const handleScroll = () => {
+      const y = window.scrollY;
+      setShowFloatingSearch((prev) => {
+        if (prev && y < 130) return false;
+        if (!prev && y > 170) return true;
+        return prev;
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isMobile]);
 
   const filteredRestaurants = useMemo(
     () =>
@@ -62,7 +100,6 @@ const Home = () => {
           const matchesFoodType =
             foodType === 'all' ? true : foodType === 'veg' ? restaurant.pureVeg : !restaurant.pureVeg;
           const matchesBudget = under100Only ? restaurant.minOrder <= 100 : true;
-
           return matchesCity && matchesCategory && matchesSearch && matchesFoodType && matchesBudget;
         })
         .sort((a, b) => {
@@ -74,7 +111,6 @@ const Home = () => {
 
   const mobileVisibleRestaurants = useMemo(() => {
     if (!isMobile || filteredRestaurants.length >= 30) return filteredRestaurants;
-
     return restaurants
       .filter((restaurant) => {
         const matchesCategory = selectedCategory === 'all' ? true : restaurant.category === selectedCategory;
@@ -83,7 +119,6 @@ const Home = () => {
           restaurant.cuisine.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesFoodType = foodType === 'all' ? true : foodType === 'veg' ? restaurant.pureVeg : !restaurant.pureVeg;
         const matchesBudget = under100Only ? restaurant.minOrder <= 100 : true;
-
         return matchesCategory && matchesSearch && matchesFoodType && matchesBudget;
       })
       .sort((a, b) => {
@@ -119,7 +154,6 @@ const Home = () => {
           >
             {city} <FaChevronDown size={12} />
           </button>
-
           {isCityMenuOpen && (
             <div className="absolute top-8 left-6 z-20 w-44 rounded-xl border border-zest-muted/20 bg-zest-card shadow-2xl">
               {cityOptions.map((item) => (
@@ -140,12 +174,7 @@ const Home = () => {
           )}
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="relative"
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="relative">
           <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-zest-muted" />
           <input
             ref={searchRef}
@@ -186,12 +215,7 @@ const Home = () => {
         <CategoryScroll selected={selectedCategory} onSelect={setSelectedCategory} categories={categories} />
       </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.25 }}
-        className="flex gap-3 overflow-x-auto pb-2 mb-6 scrollbar-hide"
-      >
+      <div className="flex gap-3 overflow-x-auto pb-2 mb-6 scrollbar-hide">
         <button
           onClick={() => setSortBy(sortBy === 'rating' ? 'delivery' : 'rating')}
           className="px-4 py-2 rounded-xl border text-sm font-medium flex items-center gap-2 whitespace-nowrap bg-zest-card text-zest-muted border-zest-muted/20"
@@ -201,9 +225,7 @@ const Home = () => {
         <button
           onClick={() => setFoodType(foodType === 'veg' ? 'all' : 'veg')}
           className={`px-4 py-2 rounded-xl border text-sm font-medium flex items-center gap-2 whitespace-nowrap ${
-            foodType === 'veg'
-              ? 'bg-zest-orange text-white border-zest-orange'
-              : 'bg-zest-card text-zest-muted border-zest-muted/20'
+            foodType === 'veg' ? 'bg-zest-orange text-white border-zest-orange' : 'bg-zest-card text-zest-muted border-zest-muted/20'
           }`}
         >
           <FaLeaf /> Veg
@@ -211,71 +233,54 @@ const Home = () => {
         <button
           onClick={() => setFoodType(foodType === 'nonveg' ? 'all' : 'nonveg')}
           className={`px-4 py-2 rounded-xl border text-sm font-medium flex items-center gap-2 whitespace-nowrap ${
-            foodType === 'nonveg'
-              ? 'bg-zest-orange text-white border-zest-orange'
-              : 'bg-zest-card text-zest-muted border-zest-muted/20'
+            foodType === 'nonveg' ? 'bg-zest-orange text-white border-zest-orange' : 'bg-zest-card text-zest-muted border-zest-muted/20'
           }`}
         >
           <FaDrumstickBite /> Non-Veg
         </button>
-      </motion.div>
+      </div>
 
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-zest-text">Top restaurants in {city}</h2>
-          <span className="text-zest-muted text-sm">{filteredRestaurants.length} places</span>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredRestaurants.map((restaurant, index) => (
-            <RestaurantCard
-              key={restaurant.id}
-              restaurant={restaurant}
-              index={index}
-              onClick={() => navigate(`/restaurant/${restaurant.id}`)}
-            />
-          ))}
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {filteredRestaurants.map((restaurant, index) => (
+          <RestaurantCard
+            key={restaurant.id}
+            restaurant={restaurant}
+            index={index}
+            onClick={() => navigate(`/restaurant/${restaurant.id}`)}
+          />
+        ))}
       </div>
     </div>
   );
 
   const renderMobile = () => (
-    <div className="pb-4">
-      <div className="relative overflow-hidden bg-gradient-to-b from-sky-300 via-sky-500 to-blue-700 px-4 pt-5 pb-7">
+    <div className="pb-4 bg-zest-dark text-zest-text">
+      <div className="relative overflow-hidden bg-gradient-to-b from-sky-300 via-blue-500 to-blue-700 px-4 pt-5 pb-4">
         <div className="absolute inset-0 opacity-15 bg-[radial-gradient(circle_at_20%_30%,white,transparent_35%),radial-gradient(circle_at_85%_20%,white,transparent_25%),linear-gradient(to_right,rgba(255,255,255,0.25)_1px,transparent_1px)] bg-[length:100%_100%,100%_100%,16px_16px]" />
 
-        <div className="relative flex items-start justify-between">
+        <div className="relative flex items-start justify-between mb-4">
           <div>
-            <button
-              onClick={() => setIsCityMenuOpen((prev) => !prev)}
-              className="flex items-center gap-1 text-slate-900 font-extrabold text-[34px]"
-            >
-              <FaMapMarkerAlt className="text-black text-base" />
-              <span className="text-[21px]">Work</span>
-              <FaChevronDown className="text-xs" />
+            <button onClick={() => setIsCityMenuOpen((prev) => !prev)} className="flex items-center gap-1 text-slate-900 font-bold text-[32px]">
+              <FaMapMarkerAlt className="text-slate-900 text-base" />
+              <span className="text-[20px]">Work</span>
+              <FaChevronDown className="text-xs mt-0.5" />
             </button>
-            <p className="text-slate-900/80 text-base max-w-[210px] truncate">{city} Delivery Area</p>
+            <p className="text-slate-900/85 text-base max-w-[210px] truncate">{city} Delivery Area</p>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="bg-yellow-100 text-yellow-900 text-xs font-bold px-3 py-1 rounded-full border border-yellow-700/30">
-              GOLD Rs1
-            </span>
-            <button className="w-9 h-9 bg-white/75 rounded-full flex items-center justify-center">
+            <span className="bg-yellow-100 text-yellow-900 text-xs font-bold px-3 py-1 rounded-full border border-yellow-700/30">GOLD Rs1</span>
+            <button className="w-9 h-9 bg-white/80 rounded-full flex items-center justify-center">
               <FaTicketAlt className="text-slate-700" />
             </button>
-            <button
-              onClick={() => navigate('/profile')}
-              className="w-9 h-9 bg-white/75 rounded-full flex items-center justify-center"
-            >
+            <button onClick={() => navigate('/profile')} className="w-9 h-9 bg-white/80 rounded-full flex items-center justify-center">
               <FaUserCircle className="text-blue-600 text-xl" />
             </button>
           </div>
         </div>
 
         {isCityMenuOpen && (
-          <div className="relative mt-2 z-20 w-44 rounded-xl border border-slate-200 bg-white shadow-2xl">
+          <div className="relative mt-2 z-20 w-44 rounded-xl border border-zest-muted/20 bg-zest-card shadow-2xl">
             {cityOptions.map((item) => (
               <button
                 key={item}
@@ -283,161 +288,209 @@ const Home = () => {
                   selectManualCity(item);
                   setIsCityMenuOpen(false);
                 }}
-                className={`w-full px-3 py-2 text-left text-sm hover:bg-slate-100 ${
-                  item === city ? 'text-orange-500' : 'text-slate-700'
-                }`}
+                className={`w-full px-3 py-2 text-left text-sm hover:bg-zest-dark ${item === city ? 'text-zest-orange' : 'text-zest-text'}`}
               >
                 {item}
               </button>
             ))}
           </div>
         )}
-        
 
-        <div className="relative mt-5">
-          <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-rose-500 text-xl" />
-          <input
-            ref={searchRef}
-            type="text"
-            placeholder='Search "chaat"'
-            value={searchQuery}
-            onChange={(event) => setSearchQuery(event.target.value)}
-            className="w-full bg-white rounded-2xl py-4 pl-12 pr-14 text-slate-700 placeholder-slate-400 text-2xl font-medium focus:outline-none"
-          />
-          <FaMicrophone className="absolute right-4 top-1/2 -translate-y-1/2 text-rose-500 text-xl" />
+        <div className="relative mb-3 flex items-center gap-2">
+          <div className="relative flex-1">
+            <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-rose-500 text-base pointer-events-none" />
+            <input
+              ref={searchRef}
+              type="text"
+              placeholder='Search "chaat"'
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              className="w-full bg-white rounded-2xl h-12 pl-11 pr-12 text-[20px] leading-none text-slate-700 placeholder-slate-400 border border-white/80 focus:outline-none focus:ring-2 focus:ring-rose-300/70"
+            />
+            <div className="absolute right-0 top-0 h-12 w-11 border-l border-slate-200/80 flex items-center justify-center rounded-r-2xl">
+              <FaMicrophone className="text-rose-500 text-base" />
+            </div>
+          </div>
+          <button
+            onClick={() => setVegModeEnabled((prev) => !prev)}
+            className={`w-[58px] h-12 rounded-2xl text-[10px] font-bold leading-tight flex flex-col items-center justify-center transition-colors ${
+              vegModeEnabled ? 'bg-emerald-100 text-emerald-800 border border-emerald-400/50' : 'bg-white/85 text-slate-700'
+            }`}
+          >
+            <motion.span
+              animate={vegModeEnabled ? { scale: [1, 1.18, 1], rotate: [0, -8, 8, 0] } : { scale: 1, rotate: 0 }}
+              transition={{ duration: 1.1, repeat: vegModeEnabled ? Infinity : 0 }}
+              className={`${vegModeEnabled ? 'text-emerald-600' : 'text-slate-500'}`}
+            >
+              <FaLeaf className="text-xs" />
+            </motion.span>
+            <span className="mt-0.5">VEG</span>
+            <span>MODE</span>
+          </button>
         </div>
 
-        <div className="relative mt-4 rounded-3xl overflow-hidden">
-          <img
-            src={activeBanner.image}
-            alt={activeBanner.title}
-            onError={(event) => {
-              event.currentTarget.onerror = null;
-              event.currentTarget.src = FALLBACK_FOOD_IMAGE;
-            }}
-            className="w-full h-44 object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-900/60 via-blue-900/20 to-transparent" />
+        <div className="relative rounded-3xl overflow-hidden h-44">
+          <div className="absolute inset-0 flex transition-transform duration-500" style={{ transform: `translateX(-${heroSlide * 100}%)` }}>
+            {mobileHeroBanners.map((banner) => (
+              <img
+                key={banner.id}
+                src={banner.image}
+                alt={banner.title}
+                onError={(event) => {
+                  event.currentTarget.onerror = null;
+                  event.currentTarget.src = FALLBACK_FOOD_IMAGE;
+                }}
+                className="w-full h-44 shrink-0 object-cover"
+              />
+            ))}
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-900/70 via-blue-900/30 to-transparent" />
           <div className="absolute inset-0 p-4 flex flex-col justify-center">
             <h2 className="text-4xl font-black text-white tracking-tight">MEALS UNDER Rs250</h2>
-            <p className="mt-2 inline-flex self-start bg-rose-600 text-white text-xs px-2 py-1 rounded-md font-bold">
-              FINAL PRICE, BEST OFFER APPLIED
-            </p>
-            <button className="mt-3 self-start bg-black text-white px-4 py-2 rounded-full text-sm font-semibold">
-              Order now
-            </button>
+            <p className="mt-2 inline-flex self-start bg-rose-600 text-white text-xs px-2 py-1 rounded-sm font-bold">FINAL PRICE, BEST OFFER APPLIED</p>
+            <button className="mt-3 self-start bg-black/90 text-white text-sm font-semibold px-4 py-1.5 rounded-full">Order now</button>
           </div>
         </div>
 
-        <div className="relative mt-3 flex justify-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-white/50" />
-          <span className="w-2 h-2 rounded-full bg-white" />
-          <span className="w-2 h-2 rounded-full bg-white/50" />
-          <span className="w-2 h-2 rounded-full bg-white/50" />
+        <div className="relative mt-3 flex items-center justify-center gap-1.5">
+          {mobileHeroBanners.map((banner, idx) => (
+            <button
+              key={banner.id}
+              onClick={() => setHeroSlide(idx)}
+              className={`h-1.5 rounded-full transition-all ${heroSlide === idx ? 'w-4 bg-white' : 'w-1.5 bg-white/55'}`}
+              aria-label={`Go to slide ${idx + 1}`}
+            />
+          ))}
         </div>
       </div>
 
-      <div className="-mt-1 bg-slate-100 rounded-t-3xl pt-4 pb-2">
-        <div className="px-4">
-          <div className="flex gap-5 overflow-x-auto scrollbar-hide pb-3">
-            {mobileCategories.map((category) => {
-              const isSelected = selectedCategory === category.id;
-              return (
-                <button
-                  key={category.id}
-                  onClick={() => setSelectedCategory(category.id)}
-                  className="flex-shrink-0 text-center"
-                >
-                  <div className="w-16 h-16 rounded-full overflow-hidden bg-white shadow-sm mx-auto">
-                    <img
-                      src={category.image}
-                      alt={category.label}
-                      onError={(event) => {
-                        event.currentTarget.onerror = null;
-                        event.currentTarget.src = FALLBACK_FOOD_IMAGE;
-                      }}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <p className={`mt-2 text-sm font-semibold ${isSelected ? 'text-slate-900' : 'text-slate-600'}`}>
-                    {category.label}
-                  </p>
-                  <div className={`mt-2 h-1 rounded-full ${isSelected ? 'bg-rose-500' : 'bg-transparent'}`} />
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="flex gap-2 overflow-x-auto scrollbar-hide py-2">
+      <div
+        className={`fixed top-0 left-0 right-0 z-40 bg-zest-dark/95 backdrop-blur-md border-b border-zest-muted/20 px-4 py-2 transition-all duration-300 ${
+          showFloatingSearch ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-3 pointer-events-none'
+        }`}
+      >
+          <div className="relative flex items-center gap-2 max-w-7xl mx-auto">
+            <div className="relative flex-1">
+              <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-rose-500 text-base pointer-events-none" />
+              <input
+                ref={stickySearchRef}
+                type="text"
+                placeholder='Search "chaat"'
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                className="w-full bg-white rounded-2xl h-11 pl-11 pr-12 text-base leading-none text-slate-700 placeholder-slate-400 border border-white/80 focus:outline-none focus:ring-2 focus:ring-rose-300/70"
+              />
+              <div className="absolute right-0 top-0 h-11 w-11 border-l border-slate-200/80 flex items-center justify-center rounded-r-2xl">
+                <FaMicrophone className="text-rose-500 text-base" />
+              </div>
+            </div>
             <button
-              onClick={() => setSortBy(sortBy === 'rating' ? 'delivery' : 'rating')}
-              className="px-4 py-2 rounded-xl border border-slate-300 bg-white text-slate-700 text-sm font-semibold whitespace-nowrap inline-flex items-center gap-2"
-            >
-              <FaSlidersH />
-              Filters
-            </button>
-            <button
-              onClick={() => setSortBy('delivery')}
-              className="px-4 py-2 rounded-xl border border-slate-300 bg-white text-slate-700 text-sm font-semibold whitespace-nowrap inline-flex items-center gap-2"
-            >
-              <FaBolt className="text-emerald-500" />
-              Near & Fast
-            </button>
-            <button
-              onClick={() => setUnder100Only((prev) => !prev)}
-              className={`px-4 py-2 rounded-xl border text-sm font-semibold whitespace-nowrap ${
-                under100Only ? 'border-rose-500 text-rose-500 bg-rose-50' : 'border-slate-300 bg-white text-slate-700'
+              onClick={() => setVegModeEnabled((prev) => !prev)}
+              className={`w-[58px] h-11 rounded-2xl text-[10px] font-bold leading-tight flex flex-col items-center justify-center transition-colors ${
+                vegModeEnabled ? 'bg-emerald-100 text-emerald-800 border border-emerald-400/50' : 'bg-white/85 text-slate-700'
               }`}
             >
-              Under Rs100
-            </button>
-            <button
-              onClick={() => setFoodType(foodType === 'veg' ? 'all' : 'veg')}
-              className={`px-4 py-2 rounded-xl border text-sm font-semibold whitespace-nowrap ${
-                foodType === 'veg'
-                  ? 'border-emerald-500 text-emerald-600 bg-emerald-50'
-                  : 'border-slate-300 bg-white text-slate-700'
-              }`}
-            >
-              Pure Veg
+              <motion.span
+                animate={vegModeEnabled ? { scale: [1, 1.18, 1], rotate: [0, -8, 8, 0] } : { scale: 1, rotate: 0 }}
+                transition={{ duration: 1.1, repeat: vegModeEnabled ? Infinity : 0 }}
+                className={`${vegModeEnabled ? 'text-emerald-600' : 'text-slate-500'}`}
+              >
+                <FaLeaf className="text-xs" />
+              </motion.span>
+              <span className="mt-0.5">VEG</span>
+              <span>MODE</span>
             </button>
           </div>
         </div>
 
-        <div className="px-4 mt-4">
-          <h2 className="text-slate-500 text-lg tracking-[0.22em] font-semibold mb-3">RECOMMENDED FOR YOU</h2>
-          <div className="grid grid-cols-2 gap-3">
-            {mobileVisibleRestaurants.slice(0, 35).map((restaurant) => (
-              <button
-                key={restaurant.id}
-                onClick={() => navigate(`/restaurant/${restaurant.id}`)}
-                className="text-left"
-              >
-                <div className="relative rounded-2xl overflow-hidden h-28">
+      <div
+        className={`sticky ${showFloatingSearch ? 'top-[58px]' : 'top-0'} z-20 bg-zest-dark/95 backdrop-blur-md border-b border-zest-muted/20 px-4 pt-1 pb-2 transition-[top] duration-300`}
+      >
+        <div className="flex gap-5 overflow-x-auto scrollbar-hide pb-1">
+          {mobileCategories.map((category) => {
+            const isSelected = selectedCategory === category.id;
+            return (
+              <button key={category.id} onClick={() => setSelectedCategory(category.id)} className="flex-shrink-0 text-center">
+                <div className="w-16 h-16 rounded-full overflow-hidden bg-zest-card shadow-sm mx-auto border border-zest-muted/20">
                   <img
-                    src={restaurant.image}
-                    alt={restaurant.name}
+                    src={category.image}
+                    alt={category.label}
                     onError={(event) => {
                       event.currentTarget.onerror = null;
                       event.currentTarget.src = FALLBACK_FOOD_IMAGE;
                     }}
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute top-2 left-2 bg-black/70 text-white text-[11px] px-2 py-1 rounded-lg font-semibold">
-                    {restaurant.offer}
-                  </div>
-                  <div className="absolute bottom-2 left-2 bg-emerald-700 text-white text-xs px-2 py-0.5 rounded-full font-bold">
-                    {restaurant.rating} ★
-                  </div>
                 </div>
-                <p className="mt-2 text-slate-900 text-xl font-bold leading-tight line-clamp-1">{restaurant.name}</p>
-                <p className="text-emerald-600 text-xl font-semibold leading-tight inline-flex items-center gap-1">
-                  <FaBolt className="text-sm" />
-                  {restaurant.deliveryTime}-{restaurant.deliveryTime + 5} mins
-                </p>
+                <p className={`mt-2 text-sm font-semibold ${isSelected ? 'text-zest-text' : 'text-zest-muted'}`}>{category.label}</p>
+                <div className={`mt-2 h-1 rounded-full ${isSelected ? 'bg-zest-orange' : 'bg-transparent'}`} />
               </button>
-            ))}
-          </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="px-4 pt-4">
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide py-2 mb-3">
+          <button
+            onClick={() => setSortBy(sortBy === 'rating' ? 'delivery' : 'rating')}
+            className="px-4 py-2 rounded-xl border border-zest-muted/20 bg-zest-card text-zest-muted text-sm font-semibold whitespace-nowrap inline-flex items-center gap-2"
+          >
+            <FaSlidersH />
+            Filters
+          </button>
+          <button
+            onClick={() => setSortBy('delivery')}
+            className="px-4 py-2 rounded-xl border border-zest-muted/20 bg-zest-card text-zest-muted text-sm font-semibold whitespace-nowrap inline-flex items-center gap-2"
+          >
+            <FaBolt className="text-zest-success" />
+            Near & Fast
+          </button>
+          <button
+            onClick={() => setUnder100Only((prev) => !prev)}
+            className={`px-4 py-2 rounded-xl border text-sm font-semibold whitespace-nowrap ${
+              under100Only ? 'border-zest-orange text-zest-orange bg-zest-orange/10' : 'border-zest-muted/20 bg-zest-card text-zest-muted'
+            }`}
+          >
+            Under Rs100
+          </button>
+          <button
+            onClick={() => setFoodType(foodType === 'veg' ? 'all' : 'veg')}
+            className={`px-4 py-2 rounded-xl border text-sm font-semibold whitespace-nowrap ${
+              foodType === 'veg' ? 'border-zest-success text-zest-success bg-zest-success/10' : 'border-zest-muted/20 bg-zest-card text-zest-muted'
+            }`}
+          >
+            Pure Veg
+          </button>
+        </div>
+
+        <h2 className="text-zest-muted text-sm tracking-[0.22em] font-semibold mb-3">RECOMMENDED FOR YOU</h2>
+        <div className="grid grid-cols-2 gap-3">
+          {mobileVisibleRestaurants.slice(0, 35).map((restaurant) => (
+            <button key={restaurant.id} onClick={() => navigate(`/restaurant/${restaurant.id}`)} className="text-left">
+              <div className="relative rounded-2xl overflow-hidden h-28">
+                <img
+                  src={restaurant.image}
+                  alt={restaurant.name}
+                  onError={(event) => {
+                    event.currentTarget.onerror = null;
+                    event.currentTarget.src = FALLBACK_FOOD_IMAGE;
+                  }}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute top-2 left-2 bg-black/70 text-white text-[11px] px-2 py-1 rounded-lg font-semibold">{restaurant.offer}</div>
+                <div className="absolute bottom-2 left-2 bg-zest-success text-white text-xs px-2 py-0.5 rounded-full font-bold inline-flex items-center gap-1">
+                  <span>{restaurant.rating}</span>
+                  <FaStar className="text-[9px]" />
+                </div>
+              </div>
+              <p className="mt-2 text-zest-text text-lg font-bold leading-tight line-clamp-1">{restaurant.name}</p>
+              <p className="text-zest-success text-base font-semibold leading-tight inline-flex items-center gap-1">
+                <FaBolt className="text-xs" />
+                {restaurant.deliveryTime}-{restaurant.deliveryTime + 5} mins
+              </p>
+            </button>
+          ))}
         </div>
       </div>
     </div>
@@ -452,3 +505,4 @@ const Home = () => {
 };
 
 export default Home;
+

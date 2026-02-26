@@ -29,13 +29,13 @@ import { useOrders } from '../hooks/useOrders';
 const InfoRow = ({ icon, label, value, onClick }) => (
   <button
     onClick={onClick}
-    className="w-full flex items-center justify-between py-3 border-b border-slate-200 last:border-b-0"
+    className="w-full flex items-center justify-between py-3 border-b border-zest-muted/20 last:border-b-0"
   >
-    <div className="flex items-center gap-3 text-slate-800">
-      <span className="text-slate-400 text-xl">{icon}</span>
+    <div className="flex items-center gap-3 text-zest-text">
+      <span className="text-zest-muted text-xl">{icon}</span>
       <span className="text-[18px] font-medium">{label}</span>
     </div>
-    <div className="flex items-center gap-2 text-slate-500">
+    <div className="flex items-center gap-2 text-zest-muted">
       {value ? <span className="text-[17px]">{value}</span> : null}
       <FaChevronRight className="text-base" />
     </div>
@@ -76,18 +76,18 @@ const Profile = () => {
   };
 
   const renderMobile = () => (
-    <div className="min-h-screen bg-[#f3f4f8] px-4 py-5">
-      <button onClick={() => navigate('/home')} className="text-3xl text-slate-800 mb-4">
+    <div className="min-h-screen bg-zest-dark px-4 py-5">
+      <button onClick={() => navigate('/home')} className="text-3xl text-zest-text mb-4">
         <FaArrowLeft />
       </button>
 
-      <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-200">
+      <div className="bg-zest-card rounded-3xl overflow-hidden shadow-sm border border-zest-muted/20">
         <div className="p-4 flex gap-4 items-center">
           <div className="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center">
             <span className="text-5xl text-blue-600 font-semibold">{userInitial}</span>
           </div>
           <div>
-            <h1 className="text-4xl font-bold text-slate-900">{user?.name || 'Himesh'}</h1>
+            <h1 className="text-4xl font-bold text-zest-text">{user?.name || 'Himesh'}</h1>
             <button className="text-rose-500 text-base mt-1 font-medium">Edit profile</button>
           </div>
         </div>
@@ -101,22 +101,22 @@ const Profile = () => {
       </div>
 
       <div className="grid grid-cols-2 gap-3 mt-4">
-        <div className="bg-white rounded-2xl p-4 border border-slate-200">
-          <p className="text-slate-500 text-sm flex items-center gap-2">
+        <div className="bg-zest-card rounded-2xl p-4 border border-zest-muted/20">
+          <p className="text-zest-muted text-sm flex items-center gap-2">
             <FaRegMoneyBillAlt /> Zestora Money
           </p>
           <p className="text-emerald-600 text-3xl font-bold mt-2">Rs0</p>
         </div>
-        <div className="bg-white rounded-2xl p-4 border border-slate-200">
-          <p className="text-slate-500 text-sm flex items-center gap-2">
+        <div className="bg-zest-card rounded-2xl p-4 border border-zest-muted/20">
+          <p className="text-zest-muted text-sm flex items-center gap-2">
             <FaTicketAlt /> Your coupons
           </p>
-          <p className="text-slate-900 text-3xl font-bold mt-2">{Math.max(2, Math.floor(orderCount / 2))}</p>
+          <p className="text-zest-text text-3xl font-bold mt-2">{Math.max(2, Math.floor(orderCount / 2))}</p>
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl mt-4 p-4 border border-slate-200">
-        <h2 className="text-[18px] font-bold text-slate-900 mb-2">Your preferences</h2>
+      <div className="bg-zest-card rounded-3xl mt-4 p-4 border border-zest-muted/20">
+        <h2 className="text-[18px] font-bold text-zest-text mb-2">Your preferences</h2>
         <InfoRow
           icon={vegMode ? <FaToggleOn className="text-emerald-600" /> : <FaToggleOff />}
           label="Veg Mode"
@@ -136,8 +136,8 @@ const Profile = () => {
         />
       </div>
 
-      <div className="bg-white rounded-3xl mt-4 p-4 border border-slate-200">
-        <h2 className="text-[18px] font-bold text-slate-900 mb-2">Food delivery</h2>
+      <div className="bg-zest-card rounded-3xl mt-4 p-4 border border-zest-muted/20">
+        <h2 className="text-[18px] font-bold text-zest-text mb-2">Food delivery</h2>
         <InfoRow icon={<FaListAlt />} label="Your orders" value={String(orderCount)} onClick={() => navigate('/orders')} />
         <InfoRow
           icon={<FaMapMarkerAlt />}
@@ -154,9 +154,9 @@ const Profile = () => {
         <InfoRow icon={<FaTrain />} label="Order on train" onClick={() => showToast('Train delivery not available yet')} />
       </div>
 
-      <div className="bg-white rounded-3xl mt-4 p-4 border border-slate-200">
-        <h2 className="text-[18px] font-bold text-slate-900 mb-3">Account details</h2>
-        <div className="space-y-2 text-[18px] text-slate-700">
+      <div className="bg-zest-card rounded-3xl mt-4 p-4 border border-zest-muted/20">
+        <h2 className="text-[18px] font-bold text-zest-text mb-3">Account details</h2>
+        <div className="space-y-2 text-[18px] text-zest-muted">
           <p><span className="font-semibold">Email:</span> {user?.email || 'Not available'}</p>
           <p><span className="font-semibold">Phone:</span> {user?.phone || '+91 98XXXXXX10'}</p>
           <p><span className="font-semibold">City:</span> {user?.addresses?.[0]?.city || 'Alwar'}</p>

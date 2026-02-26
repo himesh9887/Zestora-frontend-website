@@ -8,7 +8,6 @@ import Login from '../pages/Login';
 import Register from '../pages/Register';
 import Home from '../pages/Home';
 import RestaurantDetails from '../pages/RestaurantDetails';
-import Cart from '../pages/Cart';
 import Checkout from '../pages/Checkout';
 import Orders from '../pages/Orders';
 import Profile from '../pages/Profile';
@@ -42,7 +41,7 @@ const AppRoutes = () => {
       } />
       <Route path="/cart" element={
         <ProtectedRoute>
-          <Cart />
+          <Navigate to="/checkout" replace />
         </ProtectedRoute>
       } />
       <Route path="/checkout" element={

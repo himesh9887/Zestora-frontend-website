@@ -16,7 +16,7 @@ const Cart = () => {
   if (cartItems.length === 0) {
     return (
       <MainLayout>
-        <div className="min-h-screen flex flex-col items-center justify-center px-4">
+        <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-zest-dark">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
@@ -34,8 +34,8 @@ const Cart = () => {
 
   return (
     <MainLayout>
-      <div className="sticky top-0 z-30 bg-zest-dark/95 backdrop-blur-xl border-b border-zest-muted/10 px-4 py-4 flex items-center gap-4">
-        <button onClick={() => navigate(-1)} className="p-2 hover:bg-zest-card rounded-xl transition-colors">
+      <div className="sticky top-0 z-30 bg-zest-card/95 backdrop-blur-xl border-b border-zest-muted/20 px-4 py-4 flex items-center gap-4">
+        <button onClick={() => navigate(-1)} className="p-2 hover:bg-zest-dark rounded-xl transition-colors">
           <FaArrowLeft className="text-zest-text" />
         </button>
         <h1 className="text-lg font-bold text-zest-text">Your Cart</h1>
@@ -44,7 +44,7 @@ const Cart = () => {
         </button>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-6">
+      <div className="max-w-7xl mx-auto px-4 py-6 pb-44 md:pb-6 bg-zest-dark min-h-screen">
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-4">
             <AnimatePresence>
@@ -60,12 +60,12 @@ const Cart = () => {
         </div>
       </div>
 
-      <div className="lg:hidden fixed bottom-20 left-0 right-0 bg-zest-card border-t border-zest-muted/10 p-4">
+      <div className="lg:hidden fixed bottom-[104px] left-4 right-4 bg-zest-card border border-zest-muted/20 rounded-2xl p-4 z-[70] shadow-lg">
         <div className="flex items-center justify-between mb-4">
           <span className="text-zest-muted">To Pay</span>
           <span className="text-2xl font-bold text-zest-text">{formatCurrency(totals.grandTotal)}</span>
         </div>
-        <Button onClick={() => navigate('/checkout')} className="w-full" size="lg">
+        <Button onClick={() => navigate('/checkout')} className="w-full bg-zest-orange hover:bg-orange-600 text-white" size="lg">
           Proceed to Checkout
         </Button>
       </div>

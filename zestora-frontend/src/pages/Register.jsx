@@ -54,7 +54,7 @@ const Register = () => {
   return (
     <AuthLayout isLogin={false}>
       <div className="text-center mb-8 hidden lg:block">
-        <h2 className="text-3xl font-bold text-white mb-2">Create Account</h2>
+        <h2 className="text-3xl font-bold text-zest-text mb-2">Create Account</h2>
         <p className="text-zest-muted">Start your delicious journey today</p>
       </div>
 
@@ -92,7 +92,7 @@ const Register = () => {
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-4 top-[38px] text-zest-muted hover:text-white"
+            className="absolute right-4 top-[38px] text-zest-muted hover:text-zest-text"
           >
             {showPassword ? <FaEyeSlash /> : <FaEye />}
           </button>
@@ -111,7 +111,7 @@ const Register = () => {
           <button
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute right-4 top-[38px] text-zest-muted hover:text-white"
+            className="absolute right-4 top-[38px] text-zest-muted hover:text-zest-text"
           >
             {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
           </button>

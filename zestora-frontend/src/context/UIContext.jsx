@@ -4,11 +4,19 @@ import { STORAGE_KEYS } from '../utils/constants';
 export const UIContext = createContext();
 
 export const UIProvider = ({ children }) => {
-  const [theme, setTheme] = useState(() => localStorage.getItem(STORAGE_KEYS.theme) || 'dark');
+  const getInitialTheme = () => {
+    const storedTheme = localStorage.getItem(STORAGE_KEYS.theme);
+    if (storedTheme === 'light' || storedTheme === 'dark') return storedTheme;
+    return 'dark';
+  };
+
+  const [theme, setTheme] = useState(getInitialTheme);
   const [toasts, setToasts] = useState([]);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
+    document.body.setAttribute('data-theme', theme);
+    document.documentElement.style.colorScheme = theme;
     localStorage.setItem(STORAGE_KEYS.theme, theme);
   }, [theme]);
 
@@ -19,7 +27,7 @@ export const UIProvider = ({ children }) => {
     setToasts((prev) => [...prev, { id, message, type }]);
     setTimeout(() => {
       setToasts((prev) => prev.filter((toast) => toast.id !== id));
-    }, 2200);
+    }, 3200);
   };
 
   const value = useMemo(

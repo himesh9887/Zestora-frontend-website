@@ -131,7 +131,7 @@ const Orders = () => {
                 <div className="mt-4 pt-4 border-t border-zest-muted/10 flex gap-3">
                   <button
                     onClick={() => handleReorder(order)}
-                    className="flex-1 py-2 text-sm font-medium text-zest-text bg-zest-dark rounded-xl hover:bg-zest-card transition-colors"
+                    className="flex-1 py-2 text-sm font-medium text-zest-text bg-zest-dark/80 rounded-xl hover:bg-zest-dark transition-colors"
                   >
                     Reorder
                   </button>

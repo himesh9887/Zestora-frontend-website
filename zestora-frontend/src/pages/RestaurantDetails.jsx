@@ -5,7 +5,6 @@ import { FaArrowLeft, FaStar, FaClock, FaMapMarkerAlt, FaShoppingBag } from 'rea
 import MainLayout from '../layouts/MainLayout';
 import MenuItem from '../components/restaurant/MenuItem';
 import { useCart } from '../hooks/useCart';
-import Button from '../components/common/Button';
 import { getRestaurantById } from '../data/mockData';
 
 const FALLBACK_FOOD_IMAGE = '/food/food-01.svg';
@@ -36,18 +35,18 @@ const RestaurantDetails = () => {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="sticky top-0 z-30 bg-white/95 md:bg-zest-dark/95 backdrop-blur-xl border-b border-slate-200 md:border-zest-muted/10 px-4 py-3 md:py-4 flex items-center gap-3 md:gap-4"
+        className="sticky top-0 z-30 bg-zest-card/95 backdrop-blur-xl border-b border-zest-muted/20 px-4 py-3 md:py-4 flex items-center gap-3 md:gap-4"
       >
         <button
           onClick={() => navigate(-1)}
-          className="p-2 hover:bg-slate-100 md:hover:bg-zest-card rounded-xl transition-colors"
+          className="p-2 hover:bg-zest-dark rounded-xl transition-colors"
         >
-          <FaArrowLeft className="text-slate-800 md:text-white" />
+          <FaArrowLeft className="text-zest-text" />
         </button>
-        <h1 className="text-lg font-bold text-slate-900 md:text-white truncate">{restaurantData.name}</h1>
+        <h1 className="text-lg font-bold text-zest-text truncate">{restaurantData.name}</h1>
       </motion.div>
 
-      <div className="max-w-7xl mx-auto bg-[#f3f4f8] md:bg-transparent min-h-screen">
+      <div className="max-w-7xl mx-auto bg-zest-dark min-h-screen">
         <div className="relative h-52 md:h-80 lg:h-96">
           <img
             src={restaurantData.image}
@@ -65,19 +64,19 @@ const RestaurantDetails = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white md:bg-zest-card rounded-3xl p-5 md:p-6 border border-slate-200 md:border-zest-muted/10 shadow-sm md:shadow-none"
+            className="bg-zest-card rounded-3xl p-5 md:p-6 border border-zest-muted/20 shadow-sm md:shadow-none"
           >
-            <h1 className="text-2xl md:text-3xl font-bold text-slate-900 md:text-white mb-2">{restaurantData.name}</h1>
-            <p className="text-slate-600 md:text-zest-muted mb-4">{restaurantData.cuisine}</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-zest-text mb-2">{restaurantData.name}</h1>
+            <p className="text-zest-muted mb-4">{restaurantData.cuisine}</p>
 
             <div className="flex flex-wrap gap-4 text-sm md:text-base">
               <div className="flex items-center gap-1 text-yellow-500">
-                <FaStar /> <span className="text-slate-900 md:text-white font-bold">{restaurantData.rating}</span>
+                <FaStar /> <span className="text-zest-text font-bold">{restaurantData.rating}</span>
               </div>
-              <div className="flex items-center gap-1 text-slate-600 md:text-zest-muted">
+              <div className="flex items-center gap-1 text-zest-muted">
                 <FaClock className="text-zest-orange" /> <span>{restaurantData.deliveryTime} min</span>
               </div>
-              <div className="flex items-center gap-1 text-slate-600 md:text-zest-muted">
+              <div className="flex items-center gap-1 text-zest-muted">
                 <FaMapMarkerAlt className="text-zest-danger" /> <span>{restaurantData.address}</span>
               </div>
             </div>
@@ -93,7 +92,7 @@ const RestaurantDetails = () => {
                 className={`px-4 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all border ${
                   selectedCategory === category
                     ? 'bg-zest-orange text-white border-zest-orange'
-                    : 'bg-white md:bg-zest-card text-slate-600 md:text-zest-muted border-slate-200 md:border-transparent hover:text-slate-900 md:hover:text-white'
+                    : 'bg-zest-card text-zest-muted border-zest-muted/20 hover:text-zest-text'
                 }`}
               >
                 {category}
@@ -102,7 +101,7 @@ const RestaurantDetails = () => {
           </div>
         </div>
 
-        <div className="px-4 pb-32 md:pb-12">
+        <div className="px-4 pb-44 md:pb-12">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             <AnimatePresence mode="wait">
               {filteredMenu.map((item) => (
@@ -116,9 +115,9 @@ const RestaurantDetails = () => {
           <motion.div
             initial={{ y: 100 }}
             animate={{ y: 0 }}
-            className="fixed bottom-20 md:bottom-8 left-4 right-4 md:left-auto md:right-8 md:w-96 z-40"
+            className="fixed bottom-[124px] md:bottom-8 left-4 right-4 md:left-auto md:right-8 md:w-96 z-[70]"
           >
-            <div className="bg-zest-orange rounded-2xl p-4 shadow-2xl shadow-orange-500/30">
+            <div className="bg-zest-orange rounded-2xl p-4 shadow-2xl shadow-orange-500/30 border border-orange-400/40 backdrop-blur-sm">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2 text-white">
                   <FaShoppingBag />
@@ -126,9 +125,12 @@ const RestaurantDetails = () => {
                 </div>
                 <span className="text-white font-bold text-lg">Rs{cartTotal.toFixed(2)}</span>
               </div>
-              <Button onClick={() => navigate('/cart')} className="w-full bg-white text-zest-orange hover:bg-gray-100">
+              <button
+                onClick={() => navigate('/cart')}
+                className="w-full py-3 rounded-xl bg-white text-zest-orange font-bold hover:bg-orange-50 transition-colors"
+              >
                 View Cart
-              </Button>
+              </button>
             </div>
           </motion.div>
         )}
