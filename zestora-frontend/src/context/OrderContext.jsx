@@ -38,33 +38,35 @@ export const OrderProvider = ({ children }) => {
     setOrders((prev) => prev.map((order) => (order.id === orderId ? { ...order, status: nextStatus } : order)));
   };
 
-  useEffect(() => {
-    const preparingOrder = orders.find((order) => order.status === ORDER_STATUS.PREPARING);
-    if (!preparingOrder) return undefined;
+  const cancelOrder = (orderId, cancellation = {}) => {
+    const cancelledAt = new Date().toISOString();
 
-    const preparingTimer = setTimeout(() => {
-      updateOrderStatus(preparingOrder.id, ORDER_STATUS.OUT_FOR_DELIVERY);
-    }, 15000);
-
-    return () => clearTimeout(preparingTimer);
-  }, [orders]);
-
-  useEffect(() => {
-    const enrouteOrder = orders.find((order) => order.status === ORDER_STATUS.OUT_FOR_DELIVERY);
-    if (!enrouteOrder) return undefined;
-
-    const deliveredTimer = setTimeout(() => {
-      updateOrderStatus(enrouteOrder.id, ORDER_STATUS.DELIVERED);
-    }, 25000);
-
-    return () => clearTimeout(deliveredTimer);
-  }, [orders]);
+    setOrders((prev) =>
+      prev.map((order) =>
+        order.id === orderId
+          ? {
+              ...order,
+              status: ORDER_STATUS.CANCELLED,
+              cancelledAt,
+              cancellation: {
+                reason: cancellation.reason || 'other',
+                details: cancellation.details?.trim() || '',
+                requestedBy: 'customer',
+                refundPreference: cancellation.refundPreference || 'original_source',
+                requestedAt: cancelledAt,
+              },
+            }
+          : order
+      )
+    );
+  };
 
   const value = useMemo(
     () => ({
       orders,
       placeOrder,
       updateOrderStatus,
+      cancelOrder,
     }),
     [orders]
   );

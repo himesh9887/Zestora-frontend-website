@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   FaMapMarkerAlt,
   FaSearch,
@@ -13,6 +13,7 @@ import {
   FaTicketAlt,
   FaUserCircle,
   FaStar,
+  FaHeadset,
 } from 'react-icons/fa';
 import MainLayout from '../layouts/MainLayout';
 import CategoryScroll from '../components/restaurant/CategoryScroll';
@@ -22,6 +23,17 @@ import { categories, promoBanners, restaurants } from '../data/mockData';
 import { useLocationState } from '../hooks/useLocationState';
 
 const FALLBACK_FOOD_IMAGE = '/food/food-01.svg';
+const categoryKeywordMap = {
+  biryani: ['biryani'],
+  'street-food': ['street', 'chaat', 'snacks'],
+  seafood: ['seafood', 'fish', 'prawn'],
+  healthy: ['healthy', 'salad', 'bowl'],
+  wraps: ['wrap', 'roll'],
+  momos: ['momo'],
+  thali: ['thali'],
+  cafe: ['cafe', 'coffee'],
+  bakery: ['bakery', 'cake', 'pastry', 'donut'],
+};
 
 const Home = () => {
   const navigate = useNavigate();
@@ -40,6 +52,8 @@ const Home = () => {
   const [heroSlide, setHeroSlide] = useState(0);
   const [vegModeEnabled, setVegModeEnabled] = useState(false);
   const [showFloatingSearch, setShowFloatingSearch] = useState(false);
+  const [isFiltering, setIsFiltering] = useState(false);
+  const handleContactSupport = () => navigate('/support');
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -88,12 +102,32 @@ const Home = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isMobile]);
 
+  useEffect(() => {
+    setIsFiltering(true);
+    const timer = setTimeout(() => setIsFiltering(false), 240);
+    return () => clearTimeout(timer);
+  }, [city, selectedCategory, searchQuery, sortBy, foodType, under100Only]);
+
+  const selectedCategoryKeywords = useMemo(
+    () => categoryKeywordMap[selectedCategory] || [selectedCategory.replace(/-/g, ' ')],
+    [selectedCategory]
+  );
+  const selectedCategoryMeta = useMemo(
+    () => categories.find((category) => category.id === selectedCategory) || categories[0],
+    [selectedCategory]
+  );
+
   const filteredRestaurants = useMemo(
     () =>
       restaurants
         .filter((restaurant) => {
           const matchesCity = restaurant.city === city;
-          const matchesCategory = selectedCategory === 'all' ? true : restaurant.category === selectedCategory;
+          const matchesCategory =
+            selectedCategory === 'all' ||
+            restaurant.category === selectedCategory ||
+            selectedCategoryKeywords.some((keyword) =>
+              `${restaurant.name} ${restaurant.cuisine}`.toLowerCase().includes(keyword.toLowerCase())
+            );
           const matchesSearch =
             restaurant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
             restaurant.cuisine.toLowerCase().includes(searchQuery.toLowerCase());
@@ -106,14 +140,19 @@ const Home = () => {
           if (sortBy === 'delivery') return a.deliveryTime - b.deliveryTime;
           return b.rating - a.rating;
         }),
-    [city, foodType, searchQuery, selectedCategory, sortBy, under100Only]
+    [city, foodType, searchQuery, selectedCategory, selectedCategoryKeywords, sortBy, under100Only]
   );
 
   const mobileVisibleRestaurants = useMemo(() => {
     if (!isMobile || filteredRestaurants.length >= 30) return filteredRestaurants;
     return restaurants
       .filter((restaurant) => {
-        const matchesCategory = selectedCategory === 'all' ? true : restaurant.category === selectedCategory;
+        const matchesCategory =
+          selectedCategory === 'all' ||
+          restaurant.category === selectedCategory ||
+          selectedCategoryKeywords.some((keyword) =>
+            `${restaurant.name} ${restaurant.cuisine}`.toLowerCase().includes(keyword.toLowerCase())
+          );
         const matchesSearch =
           restaurant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           restaurant.cuisine.toLowerCase().includes(searchQuery.toLowerCase());
@@ -125,18 +164,24 @@ const Home = () => {
         if (sortBy === 'delivery') return a.deliveryTime - b.deliveryTime;
         return b.rating - a.rating;
       });
-  }, [filteredRestaurants, foodType, isMobile, searchQuery, selectedCategory, sortBy, under100Only]);
+  }, [filteredRestaurants, foodType, isMobile, searchQuery, selectedCategory, selectedCategoryKeywords, sortBy, under100Only]);
 
-  const mobileCategories = useMemo(
-    () => [
-      categories.find((item) => item.id === 'all'),
-      categories.find((item) => item.id === 'pizza'),
-      categories.find((item) => item.id === 'north-indian'),
-      categories.find((item) => item.id === 'burger'),
-      categories.find((item) => item.id === 'chinese'),
-    ].filter(Boolean),
-    []
-  );
+  const mobileCategories = useMemo(() => {
+    const preferredOrder = [
+      'all',
+      'pizza',
+      'north-indian',
+      'burger',
+      'south-indian',
+      'chinese',
+      'desserts',
+      'drinks',
+    ];
+
+    const ordered = preferredOrder.map((id) => categories.find((item) => item.id === id)).filter(Boolean);
+    const remaining = categories.filter((item) => !preferredOrder.includes(item.id));
+    return [...ordered, ...remaining];
+  }, []);
 
   const renderDesktop = () => (
     <div className="max-w-7xl mx-auto px-4 py-5 md:py-6">
@@ -215,6 +260,18 @@ const Home = () => {
         <CategoryScroll selected={selectedCategory} onSelect={setSelectedCategory} categories={categories} />
       </motion.div>
 
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-zest-text font-semibold text-base md:text-lg truncate">
+            {selectedCategoryMeta?.label || 'All'} Picks
+          </p>
+          <p className="text-zest-muted text-sm">{filteredRestaurants.length} restaurants found</p>
+        </div>
+        <span className="px-3 py-1 rounded-full bg-zest-orange/15 text-zest-orange text-xs font-semibold tracking-wide">
+          LIVE FILTER
+        </span>
+      </div>
+
       <div className="flex gap-3 overflow-x-auto pb-2 mb-6 scrollbar-hide">
         <button
           onClick={() => setSortBy(sortBy === 'rating' ? 'delivery' : 'rating')}
@@ -240,16 +297,41 @@ const Home = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {filteredRestaurants.map((restaurant, index) => (
-          <RestaurantCard
-            key={restaurant.id}
-            restaurant={restaurant}
-            index={index}
-            onClick={() => navigate(`/restaurant/${restaurant.id}`)}
-          />
-        ))}
-      </div>
+      <motion.div
+        key={`desktop-grid-${city}-${selectedCategory}-${searchQuery}-${sortBy}-${foodType}-${under100Only}`}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: isFiltering ? 0.55 : 1 }}
+        transition={{ duration: 0.25 }}
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+      >
+        {filteredRestaurants.length > 0 ? (
+          filteredRestaurants.map((restaurant, index) => (
+            <RestaurantCard
+              key={restaurant.id}
+              restaurant={restaurant}
+              index={index}
+              onClick={() => navigate(`/restaurant/${restaurant.id}`)}
+            />
+          ))
+        ) : (
+          <div className="col-span-full rounded-3xl border border-zest-muted/20 bg-zest-card/70 p-7 md:p-10 text-center">
+            <p className="text-zest-text text-xl font-bold">No matches found</p>
+            <p className="text-zest-muted mt-2">Try changing category or clearing filters.</p>
+            <button
+              onClick={() => {
+                setSelectedCategory('all');
+                setSearchQuery('');
+                setSortBy('rating');
+                setFoodType('all');
+                setUnder100Only(false);
+              }}
+              className="mt-5 px-5 py-2.5 rounded-xl bg-zest-orange text-white font-semibold hover:bg-orange-600 transition-colors"
+            >
+              Reset Filters
+            </button>
+          </div>
+        )}
+      </motion.div>
     </div>
   );
 
@@ -411,7 +493,11 @@ const Home = () => {
             const isSelected = selectedCategory === category.id;
             return (
               <button key={category.id} onClick={() => setSelectedCategory(category.id)} className="flex-shrink-0 text-center">
-                <div className="w-16 h-16 rounded-full overflow-hidden bg-zest-card shadow-sm mx-auto border border-zest-muted/20">
+                <div
+                  className={`w-16 h-16 rounded-full overflow-hidden bg-zest-card shadow-sm mx-auto border transition-all ${
+                    isSelected ? 'border-zest-orange ring-2 ring-zest-orange/30 scale-105' : 'border-zest-muted/20'
+                  }`}
+                >
                   <img
                     src={category.image}
                     alt={category.label}
@@ -423,7 +509,7 @@ const Home = () => {
                   />
                 </div>
                 <p className={`mt-2 text-sm font-semibold ${isSelected ? 'text-zest-text' : 'text-zest-muted'}`}>{category.label}</p>
-                <div className={`mt-2 h-1 rounded-full ${isSelected ? 'bg-zest-orange' : 'bg-transparent'}`} />
+                <div className={`mt-2 h-1 rounded-full transition-all ${isSelected ? 'bg-zest-orange w-full' : 'bg-transparent w-6 mx-auto'}`} />
               </button>
             );
           })}
@@ -464,34 +550,77 @@ const Home = () => {
           </button>
         </div>
 
-        <h2 className="text-zest-muted text-sm tracking-[0.22em] font-semibold mb-3">RECOMMENDED FOR YOU</h2>
-        <div className="grid grid-cols-2 gap-3">
-          {mobileVisibleRestaurants.slice(0, 35).map((restaurant) => (
-            <button key={restaurant.id} onClick={() => navigate(`/restaurant/${restaurant.id}`)} className="text-left">
-              <div className="relative rounded-2xl overflow-hidden h-28">
-                <img
-                  src={restaurant.image}
-                  alt={restaurant.name}
-                  onError={(event) => {
-                    event.currentTarget.onerror = null;
-                    event.currentTarget.src = FALLBACK_FOOD_IMAGE;
-                  }}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute top-2 left-2 bg-black/70 text-white text-[11px] px-2 py-1 rounded-lg font-semibold">{restaurant.offer}</div>
-                <div className="absolute bottom-2 left-2 bg-zest-success text-white text-xs px-2 py-0.5 rounded-full font-bold inline-flex items-center gap-1">
-                  <span>{restaurant.rating}</span>
-                  <FaStar className="text-[9px]" />
-                </div>
-              </div>
-              <p className="mt-2 text-zest-text text-lg font-bold leading-tight line-clamp-1">{restaurant.name}</p>
-              <p className="text-zest-success text-base font-semibold leading-tight inline-flex items-center gap-1">
-                <FaBolt className="text-xs" />
-                {restaurant.deliveryTime}-{restaurant.deliveryTime + 5} mins
-              </p>
-            </button>
-          ))}
+        <div className="mb-3 flex items-end justify-between">
+          <h2 className="text-zest-muted text-sm tracking-[0.22em] font-semibold">RECOMMENDED FOR YOU</h2>
+          <p className="text-zest-muted text-xs">{mobileVisibleRestaurants.length} found</p>
         </div>
+        <motion.div
+          key={`mobile-grid-${city}-${selectedCategory}-${searchQuery}-${sortBy}-${foodType}-${under100Only}`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isFiltering ? 0.6 : 1 }}
+          transition={{ duration: 0.25 }}
+          className="grid grid-cols-2 gap-3"
+        >
+          <AnimatePresence mode="popLayout">
+            {mobileVisibleRestaurants.length > 0 ? (
+              mobileVisibleRestaurants.slice(0, 35).map((restaurant, index) => (
+                <motion.button
+                  key={restaurant.id}
+                  onClick={() => navigate(`/restaurant/${restaurant.id}`)}
+                  className="text-left"
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.28, delay: Math.min(index * 0.04, 0.28) }}
+                >
+                  <div className="relative rounded-2xl overflow-hidden h-28">
+                    <img
+                      src={restaurant.image}
+                      alt={restaurant.name}
+                      onError={(event) => {
+                        event.currentTarget.onerror = null;
+                        event.currentTarget.src = FALLBACK_FOOD_IMAGE;
+                      }}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute top-2 left-2 bg-black/70 text-white text-[11px] px-2 py-1 rounded-lg font-semibold">{restaurant.offer}</div>
+                    <div className="absolute bottom-2 left-2 bg-zest-success text-white text-xs px-2 py-0.5 rounded-full font-bold inline-flex items-center gap-1">
+                      <span>{restaurant.rating}</span>
+                      <FaStar className="text-[9px]" />
+                    </div>
+                  </div>
+                  <p className="mt-2 text-zest-text text-lg font-bold leading-tight line-clamp-1">{restaurant.name}</p>
+                  <p className="text-zest-success text-base font-semibold leading-tight inline-flex items-center gap-1">
+                    <FaBolt className="text-xs" />
+                    {restaurant.deliveryTime}-{restaurant.deliveryTime + 5} mins
+                  </p>
+                </motion.button>
+              ))
+            ) : (
+              <motion.div
+                key="mobile-empty-state"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="col-span-2 rounded-2xl border border-zest-muted/20 bg-zest-card/70 p-5 text-center"
+              >
+                <p className="text-zest-text font-semibold">No food found in this filter</p>
+                <button
+                  onClick={() => {
+                    setSelectedCategory('all');
+                    setSearchQuery('');
+                    setSortBy('rating');
+                    setFoodType('all');
+                    setUnder100Only(false);
+                  }}
+                  className="mt-3 px-4 py-2 rounded-lg bg-zest-orange text-white text-sm font-semibold"
+                >
+                  Clear Filters
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
       </div>
     </div>
   );
@@ -499,10 +628,19 @@ const Home = () => {
   return (
     <MainLayout>
       <LocationPermissionModal />
+      <button
+        onClick={handleContactSupport}
+        aria-label="Contact support"
+        className="fixed right-4 bottom-[calc(env(safe-area-inset-bottom)+88px)] md:bottom-6 z-[60] inline-flex items-center justify-center rounded-full border border-zest-orange/40 bg-zest-orange text-white shadow-lg shadow-zest-orange/35 hover:bg-orange-600 transition-colors w-12 h-12 md:w-auto md:h-auto md:px-4 md:py-2 md:gap-2 md:text-sm md:font-semibold"
+      >
+        <FaHeadset className="text-base md:text-sm" />
+        <span className="hidden md:inline">Support</span>
+      </button>
       {isMobile ? renderMobile() : renderDesktop()}
     </MainLayout>
   );
 };
 
 export default Home;
+
 

@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaHome, FaSearch, FaShoppingCart, FaListAlt, FaUser } from 'react-icons/fa';
+import { FaHome, FaShoppingCart, FaListAlt, FaUser } from 'react-icons/fa';
 import { useCart } from '../../hooks/useCart';
 
 const FloatingDock = () => {
@@ -8,8 +8,7 @@ const FloatingDock = () => {
   const { cartCount } = useCart();
 
   const tabs = [
-    { to: '/home', icon: FaHome, label: 'Home', isActive: location.pathname === '/home' && location.hash !== '#search' },
-    { to: '/home#search', icon: FaSearch, label: 'Search', isActive: location.pathname === '/home' && location.hash === '#search' },
+    { to: '/home', icon: FaHome, label: 'Home', isActive: location.pathname === '/home' },
     { to: '/checkout', icon: FaShoppingCart, label: 'Cart', badge: cartCount, isActive: location.pathname === '/checkout' || location.pathname === '/cart' },
     { to: '/orders', icon: FaListAlt, label: 'Orders', isActive: location.pathname === '/orders' },
     { to: '/profile', icon: FaUser, label: 'Profile', isActive: location.pathname === '/profile' },

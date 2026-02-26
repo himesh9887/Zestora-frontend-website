@@ -21,10 +21,11 @@ const Input = ({
           </div>
         )}
         <motion.input
+          whileHover={{ y: -1 }}
           whileFocus={{ scale: 1.01 }}
           className={`w-full bg-zest-card border border-zest-muted/20 rounded-xl py-3.5 px-4 
             ${Icon ? 'pl-12' : ''} text-zest-text placeholder-zest-muted/50
-            focus:outline-none focus:border-zest-orange focus:ring-2 focus:ring-zest-orange/20
+            hover:border-zest-orange/50 focus:outline-none focus:border-zest-orange focus:ring-2 focus:ring-zest-orange/20
             transition-all duration-300`}
           {...props}
         />

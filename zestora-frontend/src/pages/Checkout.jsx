@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import {
   FaArrowLeft,
   FaBolt,
-  FaCheck,
   FaCheckCircle,
   FaChevronDown,
   FaChevronRight,
@@ -149,7 +148,7 @@ const Checkout = () => {
   const [selectedAddressId] = useState(user?.addresses?.[0]?.id || null);
   const [selectedPaymentId, setSelectedPaymentId] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [isComplete, setIsComplete] = useState(false);
+  const [isRedirectingToTracking, setIsRedirectingToTracking] = useState(false);
   const [isPaymentSheetOpen, setIsPaymentSheetOpen] = useState(false);
   const [activePaymentOption, setActivePaymentOption] = useState(null);
   const [upiId, setUpiId] = useState('');
@@ -162,10 +161,10 @@ const Checkout = () => {
   const selectedAddress = user?.addresses?.find((address) => address.id === selectedAddressId) || user?.addresses?.[0];
 
   useEffect(() => {
-    if (cartItems.length === 0 && !isComplete) {
+    if (cartItems.length === 0 && !isProcessing && !isRedirectingToTracking) {
       navigate('/home', { replace: true });
     }
-  }, [cartItems.length, isComplete, navigate]);
+  }, [cartItems.length, isProcessing, isRedirectingToTracking, navigate]);
 
   const selectedPayment = useMemo(
     () => optionGroups.flatMap((group) => group.items).find((item) => item.id === selectedPaymentId),
@@ -190,16 +189,19 @@ const Checkout = () => {
     });
 
     if (paymentResult.success) {
-      placeOrder({
+      const newOrder = placeOrder({
         items: cartItems,
         totals,
         paymentMethod: selectedPayment.gateway,
         address: selectedAddress,
       });
-      clearCart();
-      setIsComplete(true);
+      setIsRedirectingToTracking(true);
       showToast('Payment successful. Order placed!');
-      setTimeout(() => navigate('/orders'), 1800);
+      navigate(`/tracking/${newOrder.id}`, {
+        replace: true,
+        state: { orderId: newOrder.id, order: newOrder },
+      });
+      clearCart();
     } else {
       showToast('Payment failed. Try again.', 'error');
     }
@@ -376,22 +378,6 @@ const Checkout = () => {
       </div>
     );
   };
-
-  if (isComplete) {
-    return (
-      <MainLayout>
-        <div className="min-h-screen bg-zest-dark flex items-center justify-center px-4">
-          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-center">
-            <div className="w-24 h-24 bg-zest-success rounded-full flex items-center justify-center mx-auto mb-6">
-              <FaCheck className="text-4xl text-white" />
-            </div>
-            <h2 className="text-2xl font-bold text-zest-text mb-2">Order Placed Successfully</h2>
-            <p className="text-zest-muted">Redirecting to your orders...</p>
-          </motion.div>
-        </div>
-      </MainLayout>
-    );
-  }
 
   return (
     <MainLayout>

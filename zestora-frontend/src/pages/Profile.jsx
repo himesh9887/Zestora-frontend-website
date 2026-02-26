@@ -171,69 +171,124 @@ const Profile = () => {
   );
 
   const renderDesktop = () => (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      <div className="grid lg:grid-cols-[320px_1fr] gap-6">
-        <aside className="bg-zest-card border border-zest-muted/10 rounded-2xl p-5 h-fit">
-          <div className="flex items-center gap-3 mb-5">
-            <FaUserCircle className="text-4xl text-zest-orange" />
+    <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-10">
+      <div className="grid lg:grid-cols-[320px_1fr] gap-5 md:gap-6">
+        <aside className="bg-zest-card border border-zest-muted/15 rounded-3xl p-5 md:p-6 h-fit shadow-xl shadow-black/10">
+          <div className="flex items-center gap-3 mb-5 pb-5 border-b border-zest-muted/15">
+            <FaUserCircle className="text-5xl text-zest-orange" />
             <div>
-              <h1 className="text-xl font-bold text-zest-text">{user?.name || 'Guest User'}</h1>
-              <p className="text-zest-muted text-sm">{user?.email || 'Email unavailable'}</p>
+              <h1 className="text-xl md:text-2xl font-bold text-zest-text">{user?.name || 'Guest User'}</h1>
+              <p className="text-zest-muted text-sm truncate max-w-[190px]">{user?.email || 'Email unavailable'}</p>
             </div>
           </div>
-          <div className="space-y-3 text-sm">
+
+          <div className="grid grid-cols-2 gap-2 mb-5">
+            <div className="rounded-2xl border border-zest-muted/15 bg-zest-dark/45 p-3">
+              <p className="text-zest-muted text-xs">Orders</p>
+              <p className="text-zest-text text-lg font-bold">{orderCount}</p>
+            </div>
+            <div className="rounded-2xl border border-zest-muted/15 bg-zest-dark/45 p-3">
+              <p className="text-zest-muted text-xs">Points</p>
+              <p className="text-zest-orange text-lg font-bold">{rewardPoints}</p>
+            </div>
+          </div>
+
+          <div className="space-y-2 text-sm">
             <button
               onClick={() => navigate('/orders')}
-              className="w-full text-left px-3 py-2 rounded-lg hover:bg-zest-dark text-zest-text"
+              className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-zest-dark text-zest-text transition-colors"
             >
-              Order History ({orderCount})
+              Order History
             </button>
-            <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-zest-dark text-zest-text">
-              Saved Addresses ({addressCount})
+            <button className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-zest-dark text-zest-text transition-colors">
+              Saved Addresses
             </button>
-            <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-zest-dark text-zest-text">
-              Reward Points ({rewardPoints})
+            <button className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-zest-dark text-zest-text transition-colors">
+              Reward Points
             </button>
           </div>
         </aside>
 
         <div className="space-y-6">
-          <section className="bg-zest-card border border-zest-muted/10 rounded-2xl p-6">
-            <h2 className="text-xl font-bold text-zest-text mb-4">Preferences</h2>
-            <div className="grid md:grid-cols-2 gap-4">
-              <button onClick={handleToggleVegMode} className="text-left p-4 rounded-xl bg-zest-dark/60 hover:bg-zest-dark">
-                <p className="text-zest-muted text-sm">Veg Mode</p>
-                <p className="text-zest-text text-lg font-semibold">{vegMode ? 'Enabled' : 'Disabled'}</p>
+          <section className="bg-zest-card border border-zest-muted/15 rounded-3xl p-5 md:p-6 shadow-xl shadow-black/10">
+            <div className="flex items-center justify-between gap-3 mb-4">
+              <h2 className="text-xl md:text-2xl font-bold text-zest-text">Profile Overview</h2>
+              <button
+                onClick={() => navigate('/home')}
+                className="text-sm px-3 py-1.5 rounded-xl border border-zest-orange/40 text-zest-orange hover:bg-zest-orange/10 transition-colors"
+              >
+                Back to Home
               </button>
-              <button onClick={toggleTheme} className="text-left p-4 rounded-xl bg-zest-dark/60 hover:bg-zest-dark">
-                <p className="text-zest-muted text-sm">Appearance</p>
-                <p className="text-zest-text text-lg font-semibold">{theme === 'dark' ? 'Dark' : 'Light'}</p>
-              </button>
+            </div>
+
+            <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-3">
+              <div className="rounded-2xl border border-zest-muted/15 bg-zest-dark/40 p-4">
+                <p className="text-zest-muted text-xs">Total Orders</p>
+                <p className="text-zest-text text-xl font-bold mt-1">{orderCount}</p>
+              </div>
+              <div className="rounded-2xl border border-zest-muted/15 bg-zest-dark/40 p-4">
+                <p className="text-zest-muted text-xs">Cart Items</p>
+                <p className="text-zest-text text-xl font-bold mt-1">{cartCount}</p>
+              </div>
+              <div className="rounded-2xl border border-zest-muted/15 bg-zest-dark/40 p-4">
+                <p className="text-zest-muted text-xs">Addresses</p>
+                <p className="text-zest-text text-xl font-bold mt-1">{addressCount}</p>
+              </div>
+              <div className="rounded-2xl border border-zest-muted/15 bg-zest-dark/40 p-4">
+                <p className="text-zest-muted text-xs">Reward Points</p>
+                <p className="text-zest-orange text-xl font-bold mt-1">{rewardPoints}</p>
+              </div>
             </div>
           </section>
 
-          <section className="bg-zest-card border border-zest-muted/10 rounded-2xl p-6">
-            <h2 className="text-xl font-bold text-zest-text mb-4">Account Details</h2>
-            <div className="grid md:grid-cols-2 gap-3 text-zest-text">
-              <p>Email: <span className="text-zest-muted">{user?.email || 'Not available'}</span></p>
-              <p>Phone: <span className="text-zest-muted">{user?.phone || '+91 98XXXXXX10'}</span></p>
-              <p>Total Orders: <span className="text-zest-muted">{orderCount}</span></p>
-              <p>Cart Items: <span className="text-zest-muted">{cartCount}</span></p>
-              <p>Addresses: <span className="text-zest-muted">{addressCount}</span></p>
-              <p>Reward Points: <span className="text-zest-muted">{rewardPoints}</span></p>
-            </div>
-          </section>
+          <div className="grid md:grid-cols-2 gap-5">
+            <section className="bg-zest-card border border-zest-muted/15 rounded-3xl p-5 md:p-6 shadow-xl shadow-black/10">
+              <h2 className="text-xl font-bold text-zest-text mb-4">Preferences</h2>
+              <div className="space-y-3">
+                <button
+                  onClick={handleToggleVegMode}
+                  className="w-full text-left p-4 rounded-2xl bg-zest-dark/60 hover:bg-zest-dark transition-colors"
+                >
+                  <p className="text-zest-muted text-sm">Veg Mode</p>
+                  <p className="text-zest-text text-lg font-semibold">{vegMode ? 'Enabled' : 'Disabled'}</p>
+                </button>
+                <button
+                  onClick={toggleTheme}
+                  className="w-full text-left p-4 rounded-2xl bg-zest-dark/60 hover:bg-zest-dark transition-colors"
+                >
+                  <p className="text-zest-muted text-sm">Appearance</p>
+                  <p className="text-zest-text text-lg font-semibold">{theme === 'dark' ? 'Dark' : 'Light'}</p>
+                </button>
+              </div>
+            </section>
 
-          <section className="bg-zest-card border border-zest-muted/10 rounded-2xl p-6 flex flex-wrap gap-3">
-            <Button variant="secondary" onClick={() => navigate('/orders')}>
-              <FaListAlt /> Open Orders
-            </Button>
-            <Button variant="secondary" onClick={() => showToast('Coupons coming soon')}>
-              <FaTicketAlt /> My Coupons
-            </Button>
-            <Button onClick={handleLogout} className="bg-zest-danger hover:bg-red-600 text-white">
-              <FaSignOutAlt /> Logout
-            </Button>
+            <section className="bg-zest-card border border-zest-muted/15 rounded-3xl p-5 md:p-6 shadow-xl shadow-black/10">
+              <h2 className="text-xl font-bold text-zest-text mb-4">Account Details</h2>
+              <div className="space-y-2.5 text-sm md:text-base">
+                <p className="text-zest-text">Email: <span className="text-zest-muted">{user?.email || 'Not available'}</span></p>
+                <p className="text-zest-text">Phone: <span className="text-zest-muted">{user?.phone || '+91 98XXXXXX10'}</span></p>
+                <p className="text-zest-text">Primary City: <span className="text-zest-muted">{user?.addresses?.[0]?.city || 'Alwar'}</span></p>
+                <p className="text-zest-text">Member Since: <span className="text-zest-muted">2026</span></p>
+              </div>
+            </section>
+          </div>
+
+          <section className="bg-zest-card border border-zest-muted/15 rounded-3xl p-5 md:p-6 shadow-xl shadow-black/10">
+            <h2 className="text-xl font-bold text-zest-text mb-4">Quick Actions</h2>
+            <div className="flex flex-wrap gap-3">
+              <Button variant="secondary" onClick={() => navigate('/orders')}>
+                <FaListAlt /> Open Orders
+              </Button>
+              <Button variant="secondary" onClick={() => showToast('Coupons coming soon')}>
+                <FaTicketAlt /> My Coupons
+              </Button>
+              <Button variant="secondary" onClick={() => showToast('Gold membership coming soon')}>
+                <FaCrown /> Zestora Gold
+              </Button>
+              <Button onClick={handleLogout} className="bg-zest-danger hover:bg-red-600 text-white">
+                <FaSignOutAlt /> Logout
+              </Button>
+            </div>
           </section>
         </div>
       </div>
