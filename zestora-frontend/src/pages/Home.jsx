@@ -38,7 +38,7 @@ const categoryKeywordMap = {
 const Home = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { city, cityOptions, selectManualCity } = useLocationState();
+  const { city } = useLocationState();
 
   const searchRef = useRef(null);
   const stickySearchRef = useRef(null);
@@ -47,7 +47,6 @@ const Home = () => {
   const [sortBy, setSortBy] = useState('rating');
   const [foodType, setFoodType] = useState('all');
   const [under100Only, setUnder100Only] = useState(false);
-  const [isCityMenuOpen, setIsCityMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [heroSlide, setHeroSlide] = useState(0);
   const [vegModeEnabled, setVegModeEnabled] = useState(false);
@@ -194,29 +193,11 @@ const Home = () => {
           <FaMapMarkerAlt className="text-zest-orange" />
           <span className="text-sm">Delivering to</span>
           <button
-            onClick={() => setIsCityMenuOpen((prev) => !prev)}
+            onClick={() => navigate('/location')}
             className="flex items-center gap-1 text-zest-text font-semibold hover:text-zest-orange transition-colors"
           >
             {city} <FaChevronDown size={12} />
           </button>
-          {isCityMenuOpen && (
-            <div className="absolute top-8 left-6 z-20 w-44 rounded-xl border border-zest-muted/20 bg-zest-card shadow-2xl">
-              {cityOptions.map((item) => (
-                <button
-                  key={item}
-                  onClick={() => {
-                    selectManualCity(item);
-                    setIsCityMenuOpen(false);
-                  }}
-                  className={`w-full px-3 py-2 text-left text-sm hover:bg-zest-dark ${
-                    item === city ? 'text-zest-orange' : 'text-zest-text'
-                  }`}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
-          )}
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="relative">
@@ -342,7 +323,7 @@ const Home = () => {
 
         <div className="relative flex items-start justify-between mb-4">
           <div>
-            <button onClick={() => setIsCityMenuOpen((prev) => !prev)} className="flex items-center gap-1 text-slate-900 font-bold text-[32px]">
+            <button onClick={() => navigate('/location')} className="flex items-center gap-1 text-slate-900 font-bold text-[32px]">
               <FaMapMarkerAlt className="text-slate-900 text-base" />
               <span className="text-[20px]">Work</span>
               <FaChevronDown className="text-xs mt-0.5" />
@@ -360,23 +341,6 @@ const Home = () => {
             </button>
           </div>
         </div>
-
-        {isCityMenuOpen && (
-          <div className="relative mt-2 z-20 w-44 rounded-xl border border-zest-muted/20 bg-zest-card shadow-2xl">
-            {cityOptions.map((item) => (
-              <button
-                key={item}
-                onClick={() => {
-                  selectManualCity(item);
-                  setIsCityMenuOpen(false);
-                }}
-                className={`w-full px-3 py-2 text-left text-sm hover:bg-zest-dark ${item === city ? 'text-zest-orange' : 'text-zest-text'}`}
-              >
-                {item}
-              </button>
-            ))}
-          </div>
-        )}
 
         <div className="relative mb-3 flex items-center gap-2">
           <div className="relative flex-1">
@@ -642,5 +606,3 @@ const Home = () => {
 };
 
 export default Home;
-
-

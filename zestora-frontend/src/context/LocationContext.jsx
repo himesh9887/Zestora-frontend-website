@@ -26,6 +26,12 @@ export const LocationProvider = ({ children }) => {
   };
 
   const requestLocation = () => {
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    if (window.location.protocol !== 'https:' && !isLocalhost) {
+      setStatus('insecure');
+      return;
+    }
+
     if (!navigator.geolocation) {
       setStatus('unsupported');
       return;

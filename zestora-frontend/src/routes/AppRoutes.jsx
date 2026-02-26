@@ -12,6 +12,10 @@ import RestaurantDetails from '../pages/RestaurantDetails';
 import Checkout from '../pages/Checkout';
 import Orders from '../pages/Orders';
 import Profile from '../pages/Profile';
+import EditProfile from '../pages/EditProfile';
+import ProfileDetails from '../pages/ProfileDetails';
+import LocationPicker from '../pages/LocationPicker';
+import AddressBook from '../pages/AddressBook';
 import Support from '../pages/Support';
 import OrderTracking from '../pages/OrderTracking';
 
@@ -41,6 +45,11 @@ const AppRoutes = () => {
           <Home />
         </ProtectedRoute>
       } />
+      <Route path="/location" element={
+        <ProtectedRoute>
+          <LocationPicker />
+        </ProtectedRoute>
+      } />
       <Route path="/restaurant/:id" element={
         <ProtectedRoute>
           <RestaurantDetails />
@@ -64,6 +73,21 @@ const AppRoutes = () => {
       <Route path="/profile" element={
         <ProtectedRoute>
           <Profile />
+        </ProtectedRoute>
+      } />
+      <Route path="/profile/edit" element={
+        <ProtectedRoute>
+          <EditProfile />
+        </ProtectedRoute>
+      } />
+      <Route path="/profile/:slug" element={
+        <ProtectedRoute>
+          <ProfileDetails />
+        </ProtectedRoute>
+      } />
+      <Route path="/profile/address-book" element={
+        <ProtectedRoute>
+          <AddressBook />
         </ProtectedRoute>
       } />
       <Route path="/support" element={

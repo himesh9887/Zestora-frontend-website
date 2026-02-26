@@ -113,10 +113,26 @@ const Support = () => {
 
   return (
     <MainLayout>
-      <div className="relative h-[100dvh] md:h-[calc(100dvh-5rem)] max-w-6xl mx-auto px-0 md:px-4 pt-0 md:pt-6 pb-0 overflow-hidden flex flex-col">
+      <div className="relative h-[100dvh] md:h-[calc(100dvh-5rem)] max-w-6xl mx-auto px-0 md:px-4 pt-[calc(env(safe-area-inset-top)+96px)] md:pt-6 pb-0 flex flex-col">
         <div className="absolute inset-x-0 top-0 -z-10 h-44 bg-[radial-gradient(circle_at_top_right,rgba(255,114,39,0.25),transparent_60%)] pointer-events-none" />
 
-        <div className="px-3 md:px-0 pt-5 md:pt-2 mb-3 md:mb-4 flex items-center justify-between gap-3 shrink-0">
+        <div className="md:hidden fixed top-0 left-0 right-0 z-50 px-3 pt-[calc(env(safe-area-inset-top)+6px)] pb-2.5 bg-zest-dark/98 backdrop-blur-md border-b border-zest-muted/10 shadow-sm">
+          <div className="max-w-6xl mx-auto flex items-center justify-between gap-3 min-h-[44px]">
+            <button
+              onClick={() => navigate('/home')}
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-zest-muted/20 bg-zest-card text-zest-text hover:border-zest-orange/40 transition-colors"
+            >
+              <FaArrowLeft />
+              Back
+            </button>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-zest-success/30 bg-zest-success/10 text-zest-success text-xs font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-zest-success" />
+              Support Online
+            </div>
+          </div>
+        </div>
+
+        <div className="hidden md:flex px-3 md:px-0 pt-2 md:pt-2 pb-3 md:pb-0 mb-1 md:mb-4 items-center justify-between gap-3 shrink-0">
           <button
             onClick={() => navigate('/home')}
             className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-zest-muted/20 bg-zest-card text-zest-text hover:border-zest-orange/40 transition-colors"
@@ -174,7 +190,7 @@ const Support = () => {
           </aside>
 
           <section className="rounded-none md:rounded-3xl border-x-0 md:border border-y border-zest-muted/5 bg-zest-card/90 backdrop-blur-md overflow-hidden shadow-none md:shadow-xl md:shadow-black/10 flex flex-col h-full min-h-0">
-            <div className="px-4 py-3 md:px-5 md:py-4 border-b border-zest-muted/5 bg-gradient-to-r from-zest-orange/15 via-transparent to-zest-orange/10">
+            <div className="mt-[8%] px-4 py-4 md:px-5 md:py-4 border-b border-zest-muted/5 bg-gradient-to-r from-zest-orange/15 via-transparent to-zest-orange/10">
               <h2 className="text-lg md:text-xl font-bold text-zest-text">Live Chat Support</h2>
               <p className="text-xs md:text-sm text-zest-muted">Type your issue and our assistant will guide you.</p>
             </div>

@@ -398,17 +398,19 @@ const Checkout = () => {
           </div>
         </div>
 
-        <div className="bg-blue-100 px-4 py-2.5 text-blue-700 font-semibold text-base">You saved Rs20 on this order</div>
+        <div className="bg-emerald-500/15 px-4 py-2.5 text-emerald-500 font-semibold text-base">
+          You saved Rs20 on this order
+        </div>
 
         <div className="max-w-3xl mx-auto p-4 space-y-4">
           <section className="bg-zest-card rounded-3xl border border-zest-muted/20 overflow-hidden">
-            <div className="p-4 bg-[#f9f4ea] border-b border-zest-muted/20">
+            <div className="p-4 bg-amber-500/10 border-b border-zest-muted/20">
               <div className="flex justify-between gap-4">
                 <div>
                   <p className="text-xl font-semibold text-zest-text">Get Gold for 3 months at Rs1</p>
                   <p className="text-zest-muted mt-1">Enjoy FREE delivery above Rs99 and extra offers with Gold</p>
                 </div>
-                <button className="h-10 px-5 rounded-xl border-2 border-emerald-600 text-emerald-700 font-semibold">ADD</button>
+                <button className="h-10 px-5 rounded-xl border-2 border-emerald-500 text-emerald-500 font-semibold">ADD</button>
               </div>
             </div>
 
@@ -417,20 +419,20 @@ const Checkout = () => {
                 <div key={item.id} className="flex items-center justify-between gap-3">
                   <div className="min-w-0">
                     <p className="text-zest-text text-lg font-semibold truncate">{item.name}</p>
-                    <button onClick={() => navigate(-1)} className="text-emerald-700 text-sm font-medium">Edit &gt;</button>
+                    <button onClick={() => navigate(-1)} className="text-emerald-500 text-sm font-medium">Edit &gt;</button>
                   </div>
                   <div className="text-right">
                     <div className="inline-flex items-center rounded-xl border border-emerald-600 overflow-hidden">
-                      <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="px-3 py-1 text-emerald-700 font-semibold">-</button>
+                      <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="px-3 py-1 text-emerald-500 font-semibold">-</button>
                       <span className="px-4 py-1 font-semibold text-zest-text">{item.quantity}</span>
-                      <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="px-3 py-1 text-emerald-700 font-semibold">+</button>
+                      <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="px-3 py-1 text-emerald-500 font-semibold">+</button>
                     </div>
                     <p className="font-bold text-zest-text mt-1">{formatCurrency(item.price * item.quantity)}</p>
                   </div>
                 </div>
               ))}
 
-              <button onClick={() => navigate(-1)} className="text-emerald-700 font-semibold text-xl">+ Add more items</button>
+              <button onClick={() => navigate(-1)} className="text-emerald-500 font-semibold text-xl">+ Add more items</button>
 
               <div className="grid grid-cols-2 gap-2 pt-1">
                 <button className="rounded-xl border border-zest-muted/30 py-2 text-zest-muted text-sm">Add a note for restaurant</button>
@@ -440,12 +442,14 @@ const Checkout = () => {
           </section>
 
           <section className="bg-zest-card rounded-3xl border border-zest-muted/20 overflow-hidden">
-            <div className="p-4 bg-blue-100 text-blue-700 font-semibold text-lg">Save extra by applying coupons on every order</div>
+            <div className="p-4 bg-blue-500/15 text-blue-400 font-semibold text-lg">
+              Save extra by applying coupons on every order
+            </div>
             <div className="p-4 border-b border-zest-muted/20">
               <p className="text-zest-text text-xl font-semibold flex items-center gap-2">
                 <FaCheckCircle className="text-emerald-500" /> You saved Rs15 on delivery
               </p>
-              <p className="text-blue-600">Auto-applied on your order</p>
+              <p className="text-blue-400">Auto-applied on your order</p>
             </div>
             <div className="p-4 flex items-center justify-between gap-3">
               <div>

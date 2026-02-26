@@ -26,7 +26,7 @@ const MenuItem = ({ item, restaurantId }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -2 }}
-      className="bg-white md:bg-zest-card rounded-2xl p-4 flex gap-4 border border-slate-200 md:border-zest-muted/10"
+      className="bg-zest-card rounded-2xl p-4 flex gap-4 border border-zest-muted/10"
     >
       <div className="w-24 h-24 rounded-xl overflow-hidden flex-shrink-0">
         <img
@@ -42,8 +42,8 @@ const MenuItem = ({ item, restaurantId }) => {
 
       <div className="flex-1 flex flex-col justify-between">
         <div>
-          <h4 className="font-semibold text-slate-900 md:text-zest-text mb-1">{item.name}</h4>
-          <p className="text-slate-600 md:text-zest-muted text-sm line-clamp-2">{item.description}</p>
+          <h4 className="font-semibold text-zest-text mb-1">{item.name}</h4>
+          <p className="text-zest-muted text-sm line-clamp-2">{item.description}</p>
         </div>
 
         <div className="flex items-center justify-between mt-2">
@@ -58,15 +58,15 @@ const MenuItem = ({ item, restaurantId }) => {
               Add
             </motion.button>
           ) : (
-            <div className="flex items-center gap-3 bg-slate-100 md:bg-zest-dark rounded-xl p-1">
+            <div className="flex items-center gap-3 bg-zest-dark rounded-xl p-1">
               <motion.button
                 whileTap={{ scale: 0.9 }}
                 onClick={() => updateQuantity(item.id, quantity - 1)}
-                className="p-2 text-slate-500 md:text-zest-muted hover:text-slate-900 md:hover:text-zest-text"
+                className="p-2 text-zest-muted hover:text-zest-text"
               >
                 <FaMinus size={14} />
               </motion.button>
-              <span className="text-slate-900 md:text-zest-text font-semibold w-6 text-center">{quantity}</span>
+              <span className="text-zest-text font-semibold w-6 text-center">{quantity}</span>
               <motion.button
                 whileTap={{ scale: 0.9 }}
                 onClick={() => updateQuantity(item.id, quantity + 1)}

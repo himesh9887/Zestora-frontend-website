@@ -6,7 +6,7 @@ import FloatingDock from '../components/navigation/FloatingDock';
 const MainLayout = ({ children }) => {
   const location = useLocation();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const hideDockRoutes = ['/support'];
+  const hideDockRoutes = ['/support', '/profile/edit', '/location'];
   const shouldHideDock = isMobile && hideDockRoutes.includes(location.pathname);
 
   useEffect(() => {

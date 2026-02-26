@@ -33,12 +33,18 @@ const Navbar = () => {
             <div className="w-10 h-10 bg-gradient-to-br from-zest-orange to-orange-600 rounded-xl flex items-center justify-center">
               <span className="text-white font-bold text-xl">Z</span>
             </div>
-            <div className="hidden sm:block">
+            <button
+              onClick={(event) => {
+                event.preventDefault();
+                navigate('/location');
+              }}
+              className="hidden sm:block text-left"
+            >
               <span className="text-xl font-bold text-zest-text block">Zestora</span>
               <span className="text-xs text-zest-muted flex items-center gap-1">
                 <FaMapMarkerAlt className="text-zest-orange" /> {city}
               </span>
-            </div>
+            </button>
           </Link>
 
           <div className="hidden md:flex items-center gap-8">
