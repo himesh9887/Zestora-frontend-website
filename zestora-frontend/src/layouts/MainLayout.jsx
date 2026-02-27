@@ -7,7 +7,9 @@ const MainLayout = ({ children }) => {
   const location = useLocation();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const hideDockRoutes = ['/support', '/profile/edit', '/location'];
-  const shouldHideDock = isMobile && hideDockRoutes.includes(location.pathname);
+  const shouldHideDock = isMobile && (
+    hideDockRoutes.includes(location.pathname) || location.pathname.startsWith('/tracking/')
+  );
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);

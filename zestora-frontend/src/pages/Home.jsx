@@ -323,9 +323,9 @@ const Home = () => {
 
         <div className="relative flex items-start justify-between mb-4">
           <div>
-            <button onClick={() => navigate('/location')} className="flex items-center gap-1 text-slate-900 font-bold text-[32px]">
+            <button onClick={() => navigate('/location')} className="flex items-center gap-1 text-slate-900 font-bold text-lg">
               <FaMapMarkerAlt className="text-slate-900 text-base" />
-              <span className="text-[20px]">Work</span>
+              <span className="text-base">Work</span>
               <FaChevronDown className="text-xs mt-0.5" />
             </button>
             <p className="text-slate-900/85 text-base max-w-[210px] truncate">{city} Delivery Area</p>
@@ -351,7 +351,7 @@ const Home = () => {
               placeholder='Search "chaat"'
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
-              className="w-full bg-white rounded-2xl h-12 pl-11 pr-12 text-[20px] leading-none text-slate-700 placeholder-slate-400 border border-white/80 focus:outline-none focus:ring-2 focus:ring-rose-300/70"
+              className="w-full bg-white rounded-2xl h-12 pl-11 pr-12 text-base leading-none text-slate-700 placeholder-slate-400 border border-white/80 focus:outline-none focus:ring-2 focus:ring-rose-300/70"
             />
             <div className="absolute right-0 top-0 h-12 w-11 border-l border-slate-200/80 flex items-center justify-center rounded-r-2xl">
               <FaMicrophone className="text-rose-500 text-base" />
@@ -553,8 +553,8 @@ const Home = () => {
                       <FaStar className="text-[9px]" />
                     </div>
                   </div>
-                  <p className="mt-2 text-zest-text text-lg font-bold leading-tight line-clamp-1">{restaurant.name}</p>
-                  <p className="text-zest-success text-base font-semibold leading-tight inline-flex items-center gap-1">
+                  <p className="mt-2 text-zest-text text-base font-bold leading-tight line-clamp-1">{restaurant.name}</p>
+                  <p className="text-zest-success text-sm font-semibold leading-tight inline-flex items-center gap-1">
                     <FaBolt className="text-xs" />
                     {restaurant.deliveryTime}-{restaurant.deliveryTime + 5} mins
                   </p>

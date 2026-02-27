@@ -1,7 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { FaArrowLeft, FaCheckCircle, FaHome, FaRedo } from 'react-icons/fa';
+import {
+  FaArrowLeft,
+  FaCheckCircle,
+  FaHome,
+  FaRedo,
+  FaRegClock,
+  FaShareAlt,
+  FaSyncAlt,
+} from 'react-icons/fa';
 import MainLayout from '../layouts/MainLayout';
 import MapView from '../components/tracking/MapView';
 import OrderStatusCard from '../components/tracking/OrderStatusCard';
@@ -11,6 +19,7 @@ import ProgressTracker from '../components/tracking/ProgressTracker';
 import { useOrders } from '../hooks/useOrders';
 import { useUI } from '../hooks/useUI';
 import { ORDER_STATUS } from '../utils/constants';
+import { formatCurrency, formatOrderDate } from '../utils/helpers';
 
 const TOTAL_MINUTES = 30;
 
@@ -33,6 +42,13 @@ const successParticles = Array.from({ length: 12 }, (_, i) => ({
   left: `${8 + i * 7}%`,
   delay: i * 0.05,
 }));
+
+const deriveEta = (createdAt) => {
+  if (!createdAt) return TOTAL_MINUTES;
+  const diffMs = Date.now() - new Date(createdAt).getTime();
+  const elapsedMins = Math.max(0, Math.floor(diffMs / 60000));
+  return Math.max(0, TOTAL_MINUTES - elapsedMins);
+};
 
 const OrderTracking = () => {
   const navigate = useNavigate();
@@ -62,20 +78,25 @@ const OrderTracking = () => {
       name: 'Aman Verma',
       rating: '4.9',
       vehicle: 'Bike',
+      vehicleNo: 'RJ14 AX 2048',
+      phone: '+919876543210',
     }),
     []
   );
 
   useEffect(() => {
     if (!order) return;
-    if (order.status === ORDER_STATUS.CANCELLED) {
-      setStatus(ORDER_STATUS.CANCELLED);
+    const nextStatus = order.status || ORDER_STATUS.PREPARING;
+    setStatus(nextStatus);
+    if (nextStatus === ORDER_STATUS.CANCELLED || nextStatus === ORDER_STATUS.DELIVERED) {
       setEtaMinutes(0);
       return;
     }
-    setStatus(order.status || ORDER_STATUS.PREPARING);
-    if (order.status === ORDER_STATUS.DELIVERED) setEtaMinutes(0);
-    if (order.status === ORDER_STATUS.OUT_FOR_DELIVERY) setEtaMinutes((prev) => Math.min(prev, 14));
+    if (nextStatus === ORDER_STATUS.OUT_FOR_DELIVERY) {
+      setEtaMinutes((prev) => Math.min(prev, Math.max(8, deriveEta(order.createdAt))));
+      return;
+    }
+    setEtaMinutes(deriveEta(order.createdAt));
   }, [order]);
 
   useEffect(() => {
@@ -89,13 +110,11 @@ const OrderTracking = () => {
   useEffect(() => {
     if (!order || status === ORDER_STATUS.CANCELLED) return;
 
-    if (etaMinutes <= 0) {
-      if (status !== ORDER_STATUS.DELIVERED) {
-        setStatus(ORDER_STATUS.DELIVERED);
-        updateOrderStatus(order.id, ORDER_STATUS.DELIVERED);
-        setShowDeliveredFx(true);
-        showToast('Order delivered successfully');
-      }
+    if (etaMinutes <= 0 && status !== ORDER_STATUS.DELIVERED) {
+      setStatus(ORDER_STATUS.DELIVERED);
+      updateOrderStatus(order.id, ORDER_STATUS.DELIVERED);
+      setShowDeliveredFx(true);
+      showToast('Order delivered successfully');
       return;
     }
 
@@ -113,6 +132,41 @@ const OrderTracking = () => {
     return () => window.clearInterval(movementTimer);
   }, [customerLocation, status]);
 
+  useEffect(() => {
+    if (!showDeliveredFx) return undefined;
+    const doneTimer = window.setTimeout(() => setShowDeliveredFx(false), 12000);
+    return () => window.clearTimeout(doneTimer);
+  }, [showDeliveredFx]);
+
+  const trackingSteps = useMemo(() => {
+    if (!order) return [];
+    const created = formatOrderDate(order.createdAt);
+    const cancelled = order.cancelledAt ? formatOrderDate(order.cancelledAt) : '';
+
+    if (status === ORDER_STATUS.CANCELLED) {
+      return [
+        { label: 'Order placed', time: created, done: true },
+        { label: 'Cancellation requested', time: cancelled || 'Just now', done: true },
+        { label: 'Refund initiated', time: 'Within 3-5 business days', done: true },
+      ];
+    }
+
+    return [
+      { label: 'Order confirmed', time: created, done: true },
+      { label: 'Restaurant preparing your food', time: status !== ORDER_STATUS.PREPARING ? 'Completed' : 'In progress', done: true },
+      {
+        label: 'Rider picked up your order',
+        time: status === ORDER_STATUS.OUT_FOR_DELIVERY || status === ORDER_STATUS.DELIVERED ? 'Completed' : 'Pending',
+        done: status === ORDER_STATUS.OUT_FOR_DELIVERY || status === ORDER_STATUS.DELIVERED,
+      },
+      {
+        label: 'Delivered at your location',
+        time: status === ORDER_STATUS.DELIVERED ? 'Completed' : `ETA ${Math.max(0, etaMinutes)} mins`,
+        done: status === ORDER_STATUS.DELIVERED,
+      },
+    ];
+  }, [etaMinutes, order, status]);
+
   const handleCancelOrder = () => {
     if (!order || status !== ORDER_STATUS.PREPARING) return;
     setIsCancelling(true);
@@ -125,6 +179,44 @@ const OrderTracking = () => {
     setEtaMinutes(0);
     setIsCancelling(false);
     showToast('Order cancelled');
+  };
+
+  const handleContactDriver = () => {
+    window.location.href = `tel:${driver.phone}`;
+  };
+
+  const handleSupport = () => {
+    navigate('/support', {
+      state: {
+        orderId: order?.id,
+        source: 'tracking',
+      },
+    });
+  };
+
+  const handleRefresh = () => {
+    if (status === ORDER_STATUS.CANCELLED || status === ORDER_STATUS.DELIVERED) {
+      showToast('Order status already final');
+      return;
+    }
+    showToast('Tracking refreshed');
+  };
+
+  const handleShare = async () => {
+    if (!order) return;
+    const shareText = `Track my order ${order.id} from ${order.restaurantName}. ETA ${Math.max(0, etaMinutes)} mins.`;
+    try {
+      if (navigator.share) {
+        await navigator.share({ text: shareText });
+      } else if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(shareText);
+        showToast('Tracking details copied');
+      } else {
+        showToast('Share not supported on this device', 'error');
+      }
+    } catch {
+      showToast('Unable to share right now', 'error');
+    }
   };
 
   if (!order) {
@@ -151,7 +243,16 @@ const OrderTracking = () => {
             <FaArrowLeft />
             Back to Orders
           </button>
-          <p className="text-zest-muted text-sm">Tracking ID: {order.id}</p>
+          <div className="inline-flex gap-2">
+            <button onClick={handleRefresh} className="h-10 px-3 rounded-xl border border-zest-muted/20 bg-zest-card text-zest-text inline-flex items-center gap-2">
+              <FaSyncAlt />
+              Refresh
+            </button>
+            <button onClick={handleShare} className="h-10 px-3 rounded-xl border border-zest-muted/20 bg-zest-card text-zest-text inline-flex items-center gap-2">
+              <FaShareAlt />
+              Share
+            </button>
+          </div>
         </div>
 
         <div className="mb-4 rounded-2xl border border-zest-muted/15 bg-gradient-to-r from-zest-card via-zest-card to-zest-orange/10 p-4 shadow-lg">
@@ -176,12 +277,73 @@ const OrderTracking = () => {
               status={status}
             />
             <ETAIndicator etaMinutes={etaMinutes} totalMinutes={TOTAL_MINUTES} delivered={status === ORDER_STATUS.DELIVERED} />
+
+            <div className="bg-zest-card border border-zest-muted/20 rounded-2xl p-4 shadow-lg">
+              <p className="text-zest-muted text-xs uppercase tracking-[0.2em]">Tracking Timeline</p>
+              <div className="mt-4 space-y-3">
+                {trackingSteps.map((step, idx) => (
+                  <div key={step.label} className="flex gap-3">
+                    <div className="pt-0.5">
+                      <span className={`w-3 h-3 rounded-full inline-block ${step.done ? 'bg-zest-success' : 'bg-zest-muted/40'}`} />
+                      {idx !== trackingSteps.length - 1 && <span className="block w-px h-6 bg-zest-muted/30 mx-auto mt-1" />}
+                    </div>
+                    <div className="min-w-0 pb-1">
+                      <p className={`text-sm font-semibold ${step.done ? 'text-zest-text' : 'text-zest-muted'}`}>{step.label}</p>
+                      <p className="text-xs text-zest-muted inline-flex items-center gap-1 mt-0.5">
+                        <FaRegClock className="text-[10px]" />
+                        {step.time}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
           <div className="lg:col-span-2 space-y-4">
             <OrderStatusCard order={order} status={status} onCancel={handleCancelOrder} cancelling={isCancelling} />
             <ProgressTracker status={status} />
-            <DeliveryInfo driver={driver} etaMinutes={etaMinutes} delivered={status === ORDER_STATUS.DELIVERED} />
+            <DeliveryInfo
+              driver={driver}
+              etaMinutes={etaMinutes}
+              delivered={status === ORDER_STATUS.DELIVERED}
+              onContact={handleContactDriver}
+              onSupport={handleSupport}
+            />
+
+            <div className="bg-zest-card border border-zest-muted/20 rounded-2xl p-4 shadow-lg">
+              <p className="text-zest-muted text-xs uppercase tracking-[0.2em]">Order Summary</p>
+              <div className="mt-3 space-y-2 text-sm">
+                {order.items.map((item, index) => (
+                  <div key={`${item.id}-${index}`} className="flex items-start justify-between gap-3">
+                    <p className="text-zest-text">{item.name} x {item.quantity}</p>
+                    <p className="text-zest-muted">{formatCurrency(item.price * item.quantity)}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-3 pt-3 border-t border-zest-muted/20 space-y-1.5 text-sm">
+                <div className="flex justify-between text-zest-muted">
+                  <span>Subtotal</span>
+                  <span>{formatCurrency(order.subtotal)}</span>
+                </div>
+                <div className="flex justify-between text-zest-muted">
+                  <span>Delivery Fee</span>
+                  <span>{formatCurrency(order.deliveryFee)}</span>
+                </div>
+                <div className="flex justify-between text-zest-muted">
+                  <span>Platform Fee</span>
+                  <span>{formatCurrency(order.platformFee)}</span>
+                </div>
+                <div className="flex justify-between text-zest-muted">
+                  <span>GST</span>
+                  <span>{formatCurrency(order.gst)}</span>
+                </div>
+                <div className="flex justify-between text-zest-orange font-bold">
+                  <span>Total</span>
+                  <span>{formatCurrency(order.total)}</span>
+                </div>
+              </div>
+            </div>
 
             <AnimatePresence>
               {showDeliveredFx && status === ORDER_STATUS.DELIVERED && (

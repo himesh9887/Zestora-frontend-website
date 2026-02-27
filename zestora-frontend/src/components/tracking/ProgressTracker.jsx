@@ -8,11 +8,9 @@ const stepMeta = [
 ];
 
 const ProgressTracker = ({ status }) => {
-  const activeIndex = Math.max(
-    0,
-    stepMeta.findIndex((step) => step.id === status)
-  );
-  const progressPercent = (activeIndex / (stepMeta.length - 1)) * 100;
+  const isCancelled = status === ORDER_STATUS.CANCELLED;
+  const activeIndex = Math.max(0, stepMeta.findIndex((step) => step.id === status));
+  const progressPercent = isCancelled ? 0 : (activeIndex / (stepMeta.length - 1)) * 100;
 
   return (
     <div className="bg-zest-card border border-zest-muted/20 rounded-2xl p-4 shadow-lg">
@@ -21,7 +19,7 @@ const ProgressTracker = ({ status }) => {
         <div className="absolute top-4 left-0 right-0 h-1 rounded-full bg-zest-muted/20" />
         <motion.div
           className="absolute top-4 left-0 h-1 rounded-full"
-          style={{ backgroundColor: stepMeta[activeIndex]?.color || '#FACC15' }}
+          style={{ backgroundColor: isCancelled ? '#EF4444' : stepMeta[activeIndex]?.color || '#FACC15' }}
           initial={{ width: 0 }}
           animate={{ width: `${progressPercent}%` }}
           transition={{ duration: 0.8, ease: 'easeInOut' }}
@@ -46,6 +44,9 @@ const ProgressTracker = ({ status }) => {
           })}
         </div>
       </div>
+      {isCancelled && (
+        <p className="mt-4 text-sm text-zest-danger font-medium">Order cancelled. No further live progress is available.</p>
+      )}
     </div>
   );
 };
